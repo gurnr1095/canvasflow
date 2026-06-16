@@ -2,15 +2,165 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body,
-#root {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+@layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #0A0A0A;
+    background-image: radial-gradient(circle at top left, rgba(8, 141, 255, 0.12), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.14), transparent 25%),
+      url('/chatgpt-bg.jpg');
+    background-size: cover, cover, cover;
+    background-position: center, center, center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #E5E5E5;
+    font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Custom scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0A0A;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1F1F1F;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2E2E2E;
+  }
+}
+
+/* Glassmorphism panel class */
+.glass-panel {
+  background: rgba(18, 18, 18, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* React Flow Dark Styling Customizations */
+.react-flow__pane {
+  background-color: transparent;
+}
+
+.react-flow__edge-path {
+  stroke: #2E2E2E !important;
+  stroke-width: 1.5;
+  transition: stroke 150ms ease, stroke-width 150ms ease;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #06B6D4 !important;
+  stroke-width: 2.5;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Custom React Flow Handles */
+.react-flow__handle {
+  width: 7px !important;
+  height: 7px !important;
+  background-color: #2E2E2E !important;
+  border: 1px solid #1F1F1F !important;
+  border-radius: 50% !important;
+  transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.react-flow__handle:hover {
+  background-color: #06B6D4 !important;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+}
+
+.react-flow__handle-connecting {
+  background-color: #06B6D4 !important;
+}
+
+/* Custom React Flow Controls (Bottom Right) */
+.react-flow__controls {
+  background: rgba(18, 18, 18, 0.8) !important;
+  border: 1px solid #1F1F1F !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(8px);
   overflow: hidden;
-  background-color: #0b0f19; /* Dark premium background color */
-  color: #f8fafc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: row !important;
+  gap: 2px;
+  padding: 2px !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border-bottom: none !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: #A3A3A3 !important;
+  fill: currentColor !important;
+  transition: all 150ms ease !important;
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #F5F5F5 !important;
+}
+
+.react-flow__controls-button svg {
+  max-width: 14px !important;
+  max-height: 14px !important;
+  margin: auto;
+}
+
+/* Custom React Flow MiniMap */
+.react-flow__minimap {
+  background: rgba(10, 10, 10, 0.8) !important;
+  border: 1px solid #1F1F1F !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(0, 0, 0, 0.5) !important;
+}
+
+.react-flow__minimap-node {
+  fill: #1C1C1C !important;
+  stroke: #2E2E2E !important;
+  stroke-width: 1;
+}
+
+/* Clerk Auth Custom CSS Styling overrides to blend with dark mode */
+.cl-rootBox {
+  --cl-colorText: #E5E5E5;
+  --cl-colorBackground: #121212;
+  --cl-colorInputBackground: #0A0A0A;
+  --cl-colorInputBorder: #1F1F1F;
+  --cl-colorTextSecondary: #A3A3A3;
+  --cl-colorButtonPrimary: #06B6D4;
 }

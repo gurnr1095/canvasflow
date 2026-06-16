@@ -2,50 +2,58 @@ import { memo, useState } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useCanvasStore } from '../../../stores/canvas.store';
 
-const NOTE_COLORS = ['#FEF08A', '#86EFAC', '#FCA5A5', '#E9D5FF'];
+const NOTE_COLORS = [
+  { hex: '#FEF08A', name: 'Amber' },
+  { hex: '#86EFAC', name: 'Green' },
+  { hex: '#6366F1', name: 'Indigo' },
+  { hex: '#EC4899', name: 'Pink' },
+  { hex: '#1F1F1F', name: 'Dark Gray' }
+];
 
 const NoteNode = memo(({ id, data, selected }: NodeProps) => {
-  const { content, color } = data as any;
+  const { title = 'Note', content = 'Double-click to edit...', color = '#FEF08A' } = data as any;
   const [editing, setEditing] = useState(false);
   const updateNodeData = useCanvasStore((s) => s.updateNodeData);
 
   return (
     <div
-      className="rounded-sm shadow px-3 py-2 min-w-[150px] max-w-[220px] min-h-[100px]"
+      className={`rounded-lg bg-dark-panel border-y border-r transition-all duration-200 min-w-[200px] max-w-[260px] min-h-[90px] flex flex-col ${
+        selected ? 'border-accent-cyan shadow-[0_0_12px_rgba(6,182,212,0.25)]' : 'border-dark-border hover:border-neutral-700'
+      }`}
       style={{
-        background: color,
-        border: selected ? '2px solid #2563eb' : '2px solid transparent',
+        borderLeft: `3px solid ${color}`,
       }}
-      onDoubleClick={() => setEditing(true)}
     >
-      <div className="flex gap-1 mb-2">
-        {NOTE_COLORS.map((c) => (
-          <button
-            key={c}
-            onClick={() => updateNodeData(id, { color: c })}
-            className="w-3 h-3 rounded-full border border-black/10"
-            style={{ background: c }}
-          />
-        ))}
+      {/* Note Header */}
+      <div className="px-3 py-1.5 bg-neutral-900/40 border-b border-dark-border/60 flex items-center justify-between">
+        <span className="font-sans text-[11px] font-semibold text-neutral-300 tracking-wide">
+          📝 {title}
+        </span>
       </div>
 
-      {editing ? (
-        <textarea
-          autoFocus
-          value={content}
-          onChange={(e) => updateNodeData(id, { content: e.target.value })}
-          onBlur={() => setEditing(false)}
-          className="w-full h-20 bg-transparent resize-none outline-none text-sm text-gray-700"
-          placeholder="Type your note..."
-        />
-      ) : (
-        <p className="text-sm text-gray-700 whitespace-pre-wrap">
-          📝 {content || 'Double-click to edit'}
-        </p>
-      )}
+      {/* Note Body */}
+      <div 
+        className="p-3 flex-1 flex flex-col"
+        onDoubleClick={() => setEditing(true)}
+      >
+        {editing ? (
+          <textarea
+            autoFocus
+            value={content}
+            onChange={(e) => updateNodeData(id, { content: e.target.value })}
+            onBlur={() => setEditing(false)}
+            className="w-full flex-1 min-h-[60px] bg-transparent resize-none outline-none text-xs text-neutral-300 font-sans leading-relaxed"
+            placeholder="Type your note content..."
+          />
+        ) : (
+          <p className="text-xs text-neutral-400 whitespace-pre-wrap leading-relaxed font-sans">
+            {content || 'Double-click to add content'}
+          </p>
+        )}
+      </div>
 
-      <Handle type="target" position={Position.Top}   className="!w-2.5 !h-2.5 !bg-yellow-400" />
-      <Handle type="source" position={Position.Bottom} className="!w-2.5 !h-2.5 !bg-yellow-400" />
+      <Handle type="target" position={Position.Top} className="!bg-dark-border-focus" />
+      <Handle type="source" position={Position.Bottom} className="!bg-dark-border-focus" />
     </div>
   );
 });

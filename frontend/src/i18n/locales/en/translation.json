@@ -1,0 +1,16 @@
+{
+  "workflowNode": {
+    "status": "STATUS",
+    "inputs": "INPUTS",
+    "outputs": "OUTPUTS",
+    "defaultName": "Workflow Node",
+    "expand": "Expand node",
+    "collapse": "Collapse node",
+    "statusLabels": {
+      "pending": "Pending",
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed"
+    }
+  }
+}

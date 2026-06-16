@@ -24,6 +24,7 @@ interface CanvasStore {
 
   addTopicNode: (x: number, y: number) => void;
   addNoteNode: (x: number, y: number) => void;
+  addWorkflowNode: (x: number, y: number) => void;
   updateNodeData: (id: string, patch: Record<string, unknown>) => void;
   deleteSelectedNodes: () => void;
 
@@ -58,7 +59,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
           id: nanoid(),
           type: 'topic',
           position: { x, y },
-          data: { label: 'New Topic', description: '', color: '#93C5FD' },
+          data: { label: 'New Topic', description: '', color: '#06B6D4' },
         },
       ],
     })),
@@ -71,7 +72,25 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
           id: nanoid(),
           type: 'note',
           position: { x, y },
-          data: { content: 'New note...', color: '#FEF08A' },
+          data: { title: 'New Note', content: 'Double-click to write markdown...', color: '#1F1F1F' },
+        },
+      ],
+    })),
+
+  addWorkflowNode: (x, y) =>
+    set((s) => ({
+      nodes: [
+        ...s.nodes,
+        {
+          id: nanoid(),
+          type: 'workflow',
+          position: { x, y },
+          data: {
+            name: 'New Node',
+            status: 'pending',
+            inputs: ['payload'],
+            outputs: ['result'],
+          },
         },
       ],
     })),
