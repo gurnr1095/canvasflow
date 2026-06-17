@@ -178,14 +178,14 @@ export default function ContextPanel() {
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="w-[360px] h-full bg-[#0E0E0E] border-l border-dark-border flex flex-col z-[40] select-none font-sans shrink-0 overflow-y-auto"
+      className="z-[40] flex h-full w-[360px] shrink-0 select-none flex-col overflow-y-auto border-l border-dark-border bg-[#0E0E0E] font-sans"
     >
       {/* Panel Header */}
-      <div className="px-5 py-4 border-b border-dark-border flex items-center justify-between bg-neutral-900/30">
-        <span className="text-xs font-mono tracking-wider text-neutral-400 font-semibold uppercase">
+      <div className="flex items-center justify-between border-b border-dark-border bg-neutral-900/35 px-5 py-4">
+        <span className="text-xs font-mono font-semibold uppercase tracking-[0.3em] text-neutral-400">
           Node Properties
         </span>
-        <span className="text-xs font-mono text-neutral-500 bg-neutral-950 px-2 py-0.5 rounded border border-dark-border">
+        <span className="rounded-full border border-dark-border bg-neutral-950 px-2.5 py-1 text-[10px] font-mono text-neutral-500">
           {selectedNode.type?.toUpperCase()}
         </span>
       </div>
@@ -219,7 +219,7 @@ export default function ContextPanel() {
                   setLocalContent(e.target.value);
                   handleUpdateField('content', e.target.value);
                 }}
-                className="bg-dark-panel border border-dark-border rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-accent-cyan/60 text-white placeholder-neutral-600 transition-all min-h-[160px] resize-y font-sans leading-relaxed"
+                className="min-h-[160px] resize-y rounded-xl border border-dark-border bg-dark-panel px-3.5 py-2.5 text-sm leading-relaxed text-white outline-none transition-all placeholder:text-neutral-600 focus:border-accent-cyan/60"
                 placeholder="Write node text here..."
               />
             </div>
@@ -268,7 +268,7 @@ export default function ContextPanel() {
               <select
                 value={nodeData.status || 'pending'}
                 onChange={(e) => handleUpdateField('status', e.target.value)}
-                className="bg-dark-panel border border-dark-border rounded-lg px-3.5 py-2 text-sm outline-none focus:border-accent-cyan/60 text-white font-mono"
+                className="rounded-xl border border-dark-border bg-dark-panel px-3.5 py-2.5 text-sm text-white outline-none transition-all focus:border-accent-cyan/60"
               >
                 <option value="pending">Pending</option>
                 <option value="running">Running</option>
@@ -341,7 +341,7 @@ export default function ContextPanel() {
               <button
                 onClick={handleGenerateSubflow}
                 disabled={aiActionLoading || isGenerating}
-                className="w-full text-left text-sm bg-dark-panel hover:bg-dark-panel-hover border border-dark-border hover:border-accent-cyan/40 px-3.5 py-2.5 rounded-lg text-neutral-300 font-sans transition-all flex items-center justify-between"
+                className="flex w-full items-center justify-between rounded-xl border border-dark-border bg-dark-panel px-3.5 py-2.5 text-left text-sm text-neutral-300 transition-all hover:border-accent-cyan/40 hover:bg-dark-panel-hover"
               >
                 <span>✨ Generate Sub-flow Roadmap</span>
                 <span className="text-xs font-mono text-neutral-500">⚡</span>
@@ -370,7 +370,7 @@ export default function ContextPanel() {
               connectedEdges.map((edge) => (
                 <div
                   key={edge.id}
-                  className="flex items-center justify-between px-3 py-2 bg-dark-panel/60 rounded border border-dark-border/50 text-xs font-mono text-neutral-400 group"
+                  className="group flex items-center justify-between rounded-xl border border-dark-border/50 bg-dark-panel/60 px-3 py-2 text-xs font-mono text-neutral-400"
                 >
                   <span className="truncate max-w-[220px]" title={getConnectedNodeName(edge)}>
                     {edge.source === selectedNode.id ? '→ ' : '← '} {getConnectedNodeName(edge)}
@@ -391,7 +391,7 @@ export default function ContextPanel() {
         {/* Delete button */}
         <button
           onClick={() => deleteElements({ nodes: [selectedNode] })}
-          className="w-full mt-auto py-2.5 bg-red-950/20 hover:bg-red-950/45 text-red-400 hover:text-red-300 border border-red-900/30 hover:border-red-900/60 rounded-lg text-sm font-mono transition-all"
+          className="mt-auto w-full rounded-xl border border-red-900/30 bg-red-950/20 py-2.5 text-sm font-mono text-red-400 transition-all hover:border-red-900/60 hover:bg-red-950/45 hover:text-red-300"
         >
           🗑 Delete Node
         </button>

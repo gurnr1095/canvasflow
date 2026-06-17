@@ -17,23 +17,24 @@ const NoteNode = memo(({ id, data, selected }: NodeProps) => {
 
   return (
     <div
-      className={`rounded-lg bg-dark-panel border-y border-r transition-all duration-200 min-w-[200px] max-w-[260px] min-h-[90px] flex flex-col ${
-        selected ? 'border-accent-cyan shadow-[0_0_12px_rgba(6,182,212,0.25)]' : 'border-dark-border hover:border-neutral-700'
+      className={`flex min-h-[120px] min-w-[220px] max-w-[290px] flex-col overflow-hidden rounded-2xl border bg-[#121212] shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-all duration-200 ${
+        selected
+          ? 'border-accent-cyan/70 shadow-[0_0_0_1px_rgba(6,182,212,0.25),0_10px_24px_rgba(0,0,0,0.5)]'
+          : 'border-dark-border/80 hover:border-neutral-600'
       }`}
       style={{
-        borderLeft: `3px solid ${color}`,
+        borderLeft: `4px solid ${color}`,
       }}
     >
-      {/* Note Header */}
-      <div className="px-3 py-1.5 bg-neutral-900/40 border-b border-dark-border/60 flex items-center justify-between">
-        <span className="font-sans text-[11px] font-semibold text-neutral-300 tracking-wide">
-          📝 {title}
+      <div className="flex items-center justify-between border-b border-dark-border/60 bg-gradient-to-r from-neutral-900 to-neutral-950 px-3 py-2">
+        <span className="truncate font-sans text-[11px] font-semibold tracking-[0.2em] text-neutral-300 uppercase">
+          {title}
         </span>
+        <span className="rounded-full bg-neutral-800/80 px-1.5 py-0.5 text-[9px] font-mono text-neutral-500">Note</span>
       </div>
 
-      {/* Note Body */}
-      <div 
-        className="p-3 flex-1 flex flex-col"
+      <div
+        className="flex flex-1 flex-col p-3"
         onDoubleClick={() => setEditing(true)}
       >
         {editing ? (
@@ -42,11 +43,11 @@ const NoteNode = memo(({ id, data, selected }: NodeProps) => {
             value={content}
             onChange={(e) => updateNodeData(id, { content: e.target.value })}
             onBlur={() => setEditing(false)}
-            className="w-full flex-1 min-h-[60px] bg-transparent resize-none outline-none text-xs text-neutral-300 font-sans leading-relaxed"
+            className="min-h-[70px] w-full flex-1 resize-none bg-transparent font-sans text-xs leading-relaxed text-neutral-200 outline-none placeholder:text-neutral-500"
             placeholder="Type your note content..."
           />
         ) : (
-          <p className="text-xs text-neutral-400 whitespace-pre-wrap leading-relaxed font-sans">
+          <p className="whitespace-pre-wrap font-sans text-xs leading-relaxed text-neutral-400">
             {content || 'Double-click to add content'}
           </p>
         )}

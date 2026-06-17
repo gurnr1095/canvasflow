@@ -98,14 +98,17 @@ export default function CanvasEditor({
 
       {/* Premium Centered Empty State (ChatGPT + Raycast Vibe) */}
       {nodes.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-dark-bg/60 backdrop-blur-sm z-10 p-4">
-          <div className="max-w-md w-full bg-dark-panel border border-dark-border rounded-xl shadow-[0_24px_64px_rgba(0,0,0,0.85)] p-6 flex flex-col gap-6 animate-scale-in">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-dark-bg/65 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-3xl border border-dark-border bg-dark-panel/90 p-7 shadow-[0_24px_64px_rgba(0,0,0,0.88)]">
             {/* Title / Description */}
-            <div className="flex flex-col gap-1.5">
-              <h3 className="text-base font-semibold text-neutral-100 tracking-tight">
+            <div className="flex flex-col gap-2">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent-cyan/15 bg-accent-cyan/5 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.32em] text-accent-cyan">
+                Start here
+              </div>
+              <h3 className="text-2xl font-semibold tracking-tight text-neutral-100">
                 Describe what you want to build.
               </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+              <p className="text-sm leading-relaxed text-neutral-400">
                 Type an idea below to generate a connected workflow, or get started manually by creating notes and code nodes.
               </p>
             </div>
@@ -118,12 +121,12 @@ export default function CanvasEditor({
                 onKeyDown={(e) => e.key === 'Enter' && handleEmptyGenerate()}
                 placeholder="e.g. Next.js authentication flow with Auth0..."
                 disabled={isGenerating}
-                className="bg-neutral-950 border border-dark-border focus:border-accent-cyan/60 rounded-xl px-4 py-3 text-xs w-full outline-none pr-24 text-white placeholder-neutral-600 transition-all font-sans"
+                className="w-full rounded-2xl border border-dark-border bg-neutral-950 px-4 py-3.5 pr-28 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-accent-cyan/60"
               />
               <button
                 onClick={handleEmptyGenerate}
                 disabled={isGenerating || !emptyPrompt.trim()}
-                className="absolute right-2 px-3 py-1.5 bg-neutral-100 hover:bg-white text-dark-bg rounded-lg text-[10px] font-bold transition-all disabled:opacity-50 font-sans"
+                className="absolute right-2 rounded-xl bg-gradient-to-r from-white to-neutral-200 px-3.5 py-1.75 text-[11px] font-semibold text-dark-bg transition-all hover:from-accent-cyan hover:to-white disabled:opacity-50"
               >
                 {isGenerating ? 'Running...' : 'Generate ⚡'}
               </button>
@@ -131,20 +134,20 @@ export default function CanvasEditor({
 
             {/* Manual Node Quick Actions */}
             <div className="flex flex-col gap-2.5">
-              <span className="text-[9px] font-mono text-neutral-500 tracking-widest uppercase">
+              <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-neutral-500">
                 Manual Tools
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => addNoteNode(350, 150)}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-neutral-900/40 border border-dark-border hover:border-neutral-700 text-neutral-300 hover:text-white px-3 py-2 rounded-lg text-xs transition-all font-medium font-sans"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-dark-border bg-neutral-900/40 px-3 py-2.5 text-xs font-medium text-neutral-300 transition-all hover:border-neutral-700 hover:text-white"
                 >
                   <span>📝</span>
                   <span>Create Note</span>
                 </button>
                 <button
                   onClick={() => addWorkflowNode(350, 150)}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-neutral-900/40 border border-dark-border hover:border-neutral-700 text-neutral-300 hover:text-white px-3 py-2 rounded-lg text-xs transition-all font-medium font-sans"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-dark-border bg-neutral-900/40 px-3 py-2.5 text-xs font-medium text-neutral-300 transition-all hover:border-neutral-700 hover:text-white"
                 >
                   <span>⚙️</span>
                   <span>Create Node</span>
@@ -154,19 +157,19 @@ export default function CanvasEditor({
 
             {/* Presets */}
             <div className="flex flex-col gap-2">
-              <span className="text-[9px] font-mono text-neutral-500 tracking-widest uppercase">
+              <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-neutral-500">
                 Or load a template preset
               </span>
               <div className="flex flex-col gap-1.5">
                 <button
                   onClick={() => handleLoadPreset('Design a Kubernetes service discovery flow with ingress router and microservices')}
-                  className="text-left text-xs bg-neutral-900/20 hover:bg-neutral-900/50 border border-dark-border hover:border-accent-cyan/30 px-3 py-2 rounded-lg text-neutral-400 hover:text-neutral-200 transition-all font-sans"
+                  className="rounded-xl border border-dark-border bg-neutral-900/20 px-3 py-2.5 text-left text-xs text-neutral-400 transition-all hover:border-accent-cyan/30 hover:bg-neutral-900/50 hover:text-neutral-200"
                 >
                   🚀 Kubernetes Service Discovery
                 </button>
                 <button
                   onClick={() => handleLoadPreset('Create an OAuth2 authentication flow outlining authorization code grant with PKCE')}
-                  className="text-left text-xs bg-neutral-900/20 hover:bg-neutral-900/50 border border-dark-border hover:border-accent-cyan/30 px-3 py-2 rounded-lg text-neutral-400 hover:text-neutral-200 transition-all font-sans"
+                  className="rounded-xl border border-dark-border bg-neutral-900/20 px-3 py-2.5 text-left text-xs text-neutral-400 transition-all hover:border-accent-cyan/30 hover:bg-neutral-900/50 hover:text-neutral-200"
                 >
                   🔐 OAuth2 PKCE Auth Flow
                 </button>

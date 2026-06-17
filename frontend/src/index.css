@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   html,
   body,
   #root {
@@ -19,7 +23,7 @@
     background-size: cover, cover, cover;
     background-position: center, center, center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: scroll;
     color: #E5E5E5;
     font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
   }

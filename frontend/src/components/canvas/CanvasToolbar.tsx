@@ -14,13 +14,15 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
   return (
     <div
       data-toolbar
-      className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-dark-panel/90 border border-dark-border rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] px-3 py-2 backdrop-blur-md select-none font-sans max-w-[calc(100vw-2rem)] overflow-x-auto"
+      className="absolute top-4 left-1/2 z-20 flex w-[calc(100vw-1rem)] max-w-[980px] -translate-x-1/2 flex-wrap items-center justify-center gap-2 rounded-2xl border border-dark-border/80 bg-dark-panel/85 px-3 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.65)] backdrop-blur-xl select-none font-sans"
     >
       {/* Sidebar Toggle */}
       <button
         onClick={onToggleSidebar}
-        className={`shrink-0 p-1.5 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-neutral-200 transition-colors ${
-          isSidebarOpen ? 'text-accent-cyan bg-neutral-900' : ''
+        className={`shrink-0 rounded-xl p-1.5 transition-all ${
+          isSidebarOpen
+            ? 'bg-accent-cyan/10 text-accent-cyan'
+            : 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200'
         }`}
         title="Toggle Left Sidebar"
       >
@@ -34,10 +36,10 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
       {/* Command Palette Mock Input — shrinks on small screens */}
       <button
         onClick={onOpenPalette}
-        className="flex items-center gap-2 bg-neutral-950/70 hover:bg-neutral-950 border border-dark-border px-3 py-1.5 rounded-lg text-left text-neutral-500 hover:text-neutral-400 transition-all w-36 sm:w-48 md:w-56 text-xs shrink-0"
+        className="flex w-36 shrink-0 items-center gap-2 rounded-xl border border-dark-border bg-neutral-950/75 px-3 py-1.5 text-left text-xs text-neutral-500 transition-all hover:bg-neutral-950 hover:text-neutral-300 sm:w-48 md:w-56"
       >
         <span className="truncate">Search commands...</span>
-        <kbd className="ml-auto text-[9px] font-mono bg-neutral-900 border border-dark-border px-1.5 py-0.5 rounded text-neutral-500 font-normal shrink-0">
+        <kbd className="ml-auto shrink-0 rounded-md border border-dark-border bg-neutral-900 px-1.5 py-0.5 text-[9px] font-mono text-neutral-500">
           ⌘K
         </kbd>
       </button>
@@ -47,7 +49,7 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
       {/* Manual node creators — labels hidden on xs */}
       <button
         onClick={() => addNoteNode(Math.random() * 200 + 100, Math.random() * 200 + 100)}
-        className="shrink-0 px-2 py-1.5 text-xs text-neutral-300 hover:text-neutral-100 hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1 font-medium"
+        className="flex shrink-0 items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-neutral-100"
         title="Add Note"
       >
         <span>📝</span>
@@ -56,7 +58,7 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
 
       <button
         onClick={() => addWorkflowNode(Math.random() * 200 + 100, Math.random() * 200 + 100)}
-        className="shrink-0 px-2 py-1.5 text-xs text-neutral-300 hover:text-neutral-100 hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1 font-medium"
+        className="flex shrink-0 items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-neutral-100"
         title="Add Workflow Node"
       >
         <span>⚙️</span>
@@ -69,11 +71,11 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
       <button
         onClick={onSave}
         disabled={isSaving}
-        className="shrink-0 px-3 py-1.5 bg-neutral-100 hover:bg-white text-dark-bg text-xs font-semibold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-1"
+        className="flex shrink-0 items-center gap-1 rounded-xl bg-gradient-to-r from-white to-neutral-200 px-3 py-1.5 text-xs font-semibold text-dark-bg transition-all hover:from-accent-cyan hover:to-white disabled:opacity-50"
       >
         {isSaving ? (
           <>
-            <span className="w-2 h-2 rounded-full bg-accent-blue animate-ping" />
+            <span className="h-2 w-2 animate-ping rounded-full bg-accent-blue" />
             <span className="hidden sm:inline">Saving...</span>
           </>
         ) : (
@@ -98,8 +100,8 @@ export default function CanvasToolbar({ onSave, isSaving, onOpenPalette, onToggl
       </button>
 
       {/* Info Badge — hidden on smallest screens */}
-      <div className="hidden xs:block shrink-0 text-[10px] font-mono bg-neutral-900 border border-dark-border px-2 py-1 rounded-lg text-neutral-400">
-        {nodes.length}N : {edges.length}E
+      <div className="hidden shrink-0 rounded-xl border border-dark-border bg-neutral-900/80 px-2.5 py-1 text-[10px] font-mono text-neutral-400 xs:block">
+        {nodes.length}N · {edges.length}E
       </div>
     </div>
   );

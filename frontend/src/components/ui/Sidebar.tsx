@@ -65,9 +65,9 @@ export default function Sidebar({ isOpen, onClose, onOpenPalette }: Props) {
         className="fixed inset-0 z-30 bg-black/10 backdrop-blur-[1px]" 
       />
 
-      <aside className="fixed left-4 top-4 bottom-4 w-72 glass-panel rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-40 flex flex-col font-sans overflow-hidden animate-slide-in">
+      <aside className="fixed left-4 top-4 bottom-4 z-40 flex w-72 flex-col overflow-hidden rounded-3xl border border-white/5 bg-[#0F0F0F]/90 shadow-[0_18px_48px_rgba(0,0,0,0.65)] backdrop-blur-xl animate-slide-in font-sans">
         {/* Sidebar Header */}
-        <div className="p-4.5 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-white/5 p-4">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded bg-accent-cyan flex items-center justify-center font-mono font-bold text-black text-xs">
               CF
@@ -78,7 +78,7 @@ export default function Sidebar({ isOpen, onClose, onOpenPalette }: Props) {
           </div>
           <button 
             onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-300 text-sm p-1"
+            className="rounded-lg p-1.5 text-neutral-500 transition-colors hover:bg-white/5 hover:text-neutral-300"
             title="Collapse Sidebar"
           >
             ◀
@@ -91,12 +91,12 @@ export default function Sidebar({ isOpen, onClose, onOpenPalette }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search workspaces..."
-            className="w-full bg-neutral-900/60 border border-white/5 rounded-lg px-3 py-2 text-xs outline-none focus:border-accent-cyan/40 text-neutral-200 placeholder-neutral-600 transition-all font-sans"
+            className="w-full rounded-xl border border-white/5 bg-neutral-900/70 px-3 py-2.5 text-xs text-neutral-200 outline-none transition-all placeholder:text-neutral-600 focus:border-accent-cyan/40"
           />
         </div>
 
         {/* Menu Sections */}
-        <div className="flex-1 overflow-y-auto px-3 flex flex-col gap-6 py-2">
+        <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-2">
           
           {/* Quick Actions */}
           <div className="flex flex-col gap-1.5">
