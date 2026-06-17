@@ -6,11 +6,35 @@ const api = axios.create({
 
 let clerkGetToken: (() => Promise<string | null>) | null = null;
 
+// Debug counter for monitoring API usage during development
+let requestCount = 0;
+
+export const getApiRequestCount = () => requestCount;
+
+export const resetApiRequestCount = () => {
+  requestCount = 0;
+};
+
+if (typeof window !== 'undefined') {
+  (window as Window & {
+    __API_DEBUG__?: {
+      getApiRequestCount: () => number;
+      resetApiRequestCount: () => void;
+    };
+  }).__API_DEBUG__ = {
+    getApiRequestCount,
+    resetApiRequestCount,
+  };
+}
+
 export const setClerkGetToken = (fn: () => Promise<string | null>) => {
   clerkGetToken = fn;
 };
 
 api.interceptors.request.use(async (config) => {
+  requestCount += 1;
+  console.log(`[API] #${requestCount} ${config.method?.toUpperCase()} ${config.url}`);
+
   if (clerkGetToken) {
     const token = await clerkGetToken();
     if (token) {
@@ -19,6 +43,17 @@ api.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => {
+    console.log(`[API] success #${requestCount} ${response.config.method?.toUpperCase()} ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    console.log(`[API] error #${requestCount} ${error.config?.method?.toUpperCase()} ${error.config?.url}`, error.response?.status);
+    return Promise.reject(error);
+  }
+);
 
 export default api;
 
@@ -46,3 +81,7 @@ export const aiApi = {
   generate: (prompt: string) =>
     api.post('/ai/generate', { prompt }).then((r) => r.data),
 };
+
+
+
+
