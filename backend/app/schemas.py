@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from uuid import UUID
 from typing import Any
@@ -15,8 +15,9 @@ class BoardOut(BaseModel):
     name: str
     created_at: datetime
     updated_at: datetime
+    canvas_data: dict = Field(default_factory=lambda: {"nodes": [], "edges": []})
 
     model_config = {"from_attributes": True}
 
 class BoardDetailOut(BoardOut):
-    canvas_data: dict
+    pass

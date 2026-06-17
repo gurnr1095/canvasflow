@@ -81,7 +81,3 @@ export const aiApi = {
   generate: (prompt: string) =>
     api.post('/ai/generate', { prompt }).then((r) => r.data),
 };
-
-
-
-

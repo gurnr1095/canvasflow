@@ -31,20 +31,26 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   };
 
-  const createBoard = async (nameToCreate = newName) => {
-    const trimmed = nameToCreate.trim();
-    if (!trimmed) return;
-    setCreating(true);
-    setError('');
-    try {
-      const board = await boardsApi.create(trimmed);
-      navigate(`/board/${board.id}`);
-    } catch {
-      setError('Failed to create board');
-    } finally {
-      setCreating(false);
-    }
-  };
+const createBoard = async (nameToCreate = newName) => {
+  const trimmed = nameToCreate.trim();
+  if (!trimmed) {
+    setError("Board name cannot be empty");
+    return;
+  }
+  setCreating(true);
+  setError('');
+  try {
+    const board = await boardsApi.create(trimmed);
+    navigate(`/board/${board.id}`);
+  } catch (error: any) {
+    setError(
+      error.response?.data?.detail ||
+      "Failed to create board"
+    );
+  } finally {
+    setCreating(false);
+  }
+};
 
   const handleDeleteBoard = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation(); // Avoid navigating to the board
@@ -76,7 +82,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-dark-bg text-neutral-200 flex flex-col font-sans">
+    <div className="min-h-screen overflow-y-auto bg-dark-bg text-neutral-200 flex flex-col font-sans">
       {/* Sleek Header */}
       <header className="border-b border-dark-border px-8 py-4.5 flex items-center justify-between bg-dark-bg/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-3.5">
@@ -99,7 +105,7 @@ export default function Dashboard() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-8 py-16 flex-1 w-full flex flex-col gap-12">
+      <main className="max-w-7xl mx-auto px-8 py-16 pb-24 flex-1 w-full flex flex-col gap-12 overflow-y-auto">
         
         {/* Hero Banner */}
         <section className="flex flex-col gap-4 py-8">

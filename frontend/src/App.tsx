@@ -19,8 +19,22 @@ export default function App() {
       <ApiAuthSetup>
         <BrowserRouter>
           <Routes>
-            <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
-            <Route path="/sign-up/*" element={<SignUp routing="path" path="/sign-up" />} />
+            <Route
+              path="/sign-in/*"
+              element={
+                <div className="min-h-screen flex items-center justify-center bg-dark-bg px-4">
+                  <SignIn routing="path" path="/sign-in" />
+                </div>
+              }
+            />
+            <Route
+              path="/sign-up/*"
+              element={
+                <div className="min-h-screen flex items-center justify-center bg-dark-bg px-4">
+                  <SignUp routing="path" path="/sign-up" />
+                </div>
+              }
+            />
             <Route
               path="/"
               element={

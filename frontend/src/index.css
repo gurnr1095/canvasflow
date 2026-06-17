@@ -7,10 +7,11 @@
   body,
   #root {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: #0A0A0A;
     background-image: radial-gradient(circle at top left, rgba(8, 141, 255, 0.12), transparent 28%),
       radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.14), transparent 25%),
@@ -21,6 +22,14 @@
     background-attachment: fixed;
     color: #E5E5E5;
     font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 
   /* Custom scrollbars */
