@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
+import { temporal } from 'zundo';
 import {
   applyNodeChanges,
   applyEdgeChanges,
@@ -29,101 +30,116 @@ interface CanvasStore {
   deleteSelectedNodes: () => void;
 
   loadCanvas: (nodes: Node[], edges: Edge[]) => void;
-  appendNodes: (nodes: Node[], edges: Edge[]) => void;   // for AI generation
+  appendNodes: (nodes: Node[], edges: Edge[]) => void;
   setGenerating: (v: boolean) => void;
   clearCanvas: () => void;
 }
 
-export const useCanvasStore = create<CanvasStore>((set, get) => ({
-  nodes: [],
-  edges: [],
-  isGenerating: false,
+export const useCanvasStore = create<CanvasStore>()(
+  temporal(
+    (set, get) => ({
+      nodes: [],
+      edges: [],
+      isGenerating: false,
 
-  setNodes: (nodes) => set({ nodes }),
-  setEdges: (edges) => set({ edges }),
+      setNodes: (nodes) => set({ nodes }),
+      setEdges: (edges) => set({ edges }),
 
-  onNodesChange: (changes) =>
-    set((s) => ({ nodes: applyNodeChanges(changes, s.nodes) })),
+      onNodesChange: (changes) =>
+        set((s) => ({ nodes: applyNodeChanges(changes, s.nodes) })),
 
-  onEdgesChange: (changes) =>
-    set((s) => ({ edges: applyEdgeChanges(changes, s.edges) })),
+      onEdgesChange: (changes) =>
+        set((s) => ({ edges: applyEdgeChanges(changes, s.edges) })),
 
-  onConnect: (connection) =>
-    set((s) => ({ edges: addEdge({ ...connection, animated: true }, s.edges) })),
+      onConnect: (connection) =>
+        set((s) => ({ edges: addEdge({ ...connection, animated: true }, s.edges) })),
 
-  addTopicNode: (x, y) =>
-    set((s) => ({
-      nodes: [
-        ...s.nodes,
-        {
-          id: nanoid(),
-          type: 'topic',
-          position: { x, y },
-          data: { label: 'New Topic', description: '', color: '#06B6D4' },
-        },
-      ],
-    })),
+      addTopicNode: (x, y) =>
+        set((s) => ({
+          nodes: [
+            ...s.nodes,
+            {
+              id: nanoid(),
+              type: 'topic',
+              position: { x, y },
+              data: { label: 'New Topic', description: '', color: '#06B6D4' },
+            },
+          ],
+        })),
 
-  addNoteNode: (x, y) =>
-    set((s) => ({
-      nodes: [
-        ...s.nodes,
-        {
-          id: nanoid(),
-          type: 'note',
-          position: { x, y },
-          data: { title: 'New Note', content: 'Double-click to write markdown...', color: '#1F1F1F' },
-        },
-      ],
-    })),
+      addNoteNode: (x, y) =>
+        set((s) => ({
+          nodes: [
+            ...s.nodes,
+            {
+              id: nanoid(),
+              type: 'note',
+              position: { x, y },
+              data: { title: 'New Note', content: 'Double-click to write markdown...', color: '#21262D' },
+            },
+          ],
+        })),
 
-  addWorkflowNode: (x, y) =>
-    set((s) => ({
-      nodes: [
-        ...s.nodes,
-        {
-          id: nanoid(),
-          type: 'workflow',
-          position: { x, y },
-          data: {
-            name: 'New Node',
-            status: 'pending',
-            inputs: ['payload'],
-            outputs: ['result'],
-          },
-        },
-      ],
-    })),
+      addWorkflowNode: (x, y) =>
+        set((s) => ({
+          nodes: [
+            ...s.nodes,
+            {
+              id: nanoid(),
+              type: 'workflow',
+              position: { x, y },
+              data: {
+                name: 'New Node',
+                status: 'pending',
+                inputs: ['payload'],
+                outputs: ['result'],
+              },
+            },
+          ],
+        })),
 
-  updateNodeData: (id, patch) =>
-    set((s) => ({
-      nodes: s.nodes.map((n) =>
-        n.id === id ? { ...n, data: { ...n.data, ...patch } } : n
-      ),
-    })),
+      updateNodeData: (id, patch) =>
+        set((s) => ({
+          nodes: s.nodes.map((n) =>
+            n.id === id ? { ...n, data: { ...n.data, ...patch } } : n
+          ),
+        })),
 
-  deleteSelectedNodes: () =>
-    set((s) => {
-      const selectedIds = new Set(
-        s.nodes.filter((n) => n.selected).map((n) => n.id)
-      );
-      return {
-        nodes: s.nodes.filter((n) => !selectedIds.has(n.id)),
-        edges: s.edges.filter(
-          (e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)
-        ),
-      };
+      deleteSelectedNodes: () =>
+        set((s) => {
+          const selectedIds = new Set(
+            s.nodes.filter((n) => n.selected).map((n) => n.id)
+          );
+          return {
+            nodes: s.nodes.filter((n) => !selectedIds.has(n.id)),
+            edges: s.edges.filter(
+              (e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)
+            ),
+          };
+        }),
+
+      loadCanvas: (nodes, edges) => set({ nodes, edges }),
+
+      appendNodes: (newNodes, newEdges) =>
+        set((s) => ({
+          nodes: [...s.nodes, ...newNodes],
+          edges: [...s.edges, ...newEdges],
+        })),
+
+      setGenerating: (v) => set({ isGenerating: v }),
+
+      clearCanvas: () => set({ nodes: [], edges: [] }),
     }),
+    {
+      partialize: (state) => ({ nodes: state.nodes, edges: state.edges }),
+    }
+  )
+);
 
-  loadCanvas: (nodes, edges) => set({ nodes, edges }),
+// Undo / redo helpers — call from event handlers without hooks
+export const undoCanvas = () => (useCanvasStore as any).temporal.getState().undo();
+export const redoCanvas = () => (useCanvasStore as any).temporal.getState().redo();
 
-  appendNodes: (newNodes, newEdges) =>
-    set((s) => ({
-      nodes: [...s.nodes, ...newNodes],
-      edges: [...s.edges, ...newEdges],
-    })),
-
-  setGenerating: (v) => set({ isGenerating: v }),
-
-  clearCanvas: () => set({ nodes: [], edges: [] }),
-}));
+// Hook for reading temporal state in components
+export const useTemporalCanvas = () =>
+  useStore((useCanvasStore as any).temporal);

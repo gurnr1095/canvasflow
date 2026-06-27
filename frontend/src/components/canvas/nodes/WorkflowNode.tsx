@@ -1,4 +1,5 @@
 import { memo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,8 +29,12 @@ const WorkflowNode = memo(({ id, data, selected }: NodeProps) => {
   const statusInfo = STATUS_CONFIG[safeStatus];
 
   return (
-    <div
-      className={`min-w-[240px] max-w-[320px] overflow-hidden rounded-2xl border bg-[#111111] shadow-[0_10px_28px_rgba(0,0,0,0.45)] transition-all duration-200 ${
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2, boxShadow: '0 16px 32px rgba(0,0,0,0.6)' }}
+      transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={`min-w-[240px] max-w-[320px] overflow-hidden rounded-2xl border bg-dark-panel shadow-[0_10px_28px_rgba(0,0,0,0.45)] transition-all duration-200 ${
         selected
           ? 'border-accent-cyan/70 shadow-[0_0_0_1px_rgba(6,182,212,0.25),0_10px_28px_rgba(0,0,0,0.55)]'
           : 'border-dark-border/80 hover:border-neutral-600'
@@ -106,7 +111,7 @@ const WorkflowNode = memo(({ id, data, selected }: NodeProps) => {
       <Handle type="source" position={Position.Bottom} className="!bg-dark-border-focus" />
       <Handle type="target" position={Position.Left} className="!bg-dark-border-focus" />
       <Handle type="source" position={Position.Right} className="!bg-dark-border-focus" />
-    </div>
+    </motion.div>
   );
 });
 

@@ -335,25 +335,35 @@ export default function ContextPanel() {
 
         {/* AI Actions Section */}
         <div className="flex flex-col gap-3 border-t border-dark-border/60 pt-5">
-          <label className="text-xs font-mono text-neutral-500">AI AGENT ACTIONS</label>
-          <div className="flex flex-col gap-2.5">
+          <label className="text-[10px] font-mono text-neutral-500 tracking-[0.25em] uppercase">AI Agent Actions</label>
+          <div className="flex flex-col gap-2">
             {(isAiNode || isWorkflow) && (
               <button
                 onClick={handleGenerateSubflow}
                 disabled={aiActionLoading || isGenerating}
-                className="flex w-full items-center justify-between rounded-xl border border-dark-border bg-dark-panel px-3.5 py-2.5 text-left text-sm text-neutral-300 transition-all hover:border-accent-cyan/40 hover:bg-dark-panel-hover"
+                className="flex w-full items-center justify-between gap-2 rounded-xl border border-accent-cyan/20 bg-accent-cyan/[0.05] px-3.5 py-3 text-left text-sm text-neutral-200 transition-all hover:border-accent-cyan/40 hover:bg-accent-cyan/[0.1] disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <span>✨ Generate Sub-flow Roadmap</span>
-                <span className="text-xs font-mono text-neutral-500">⚡</span>
+                <span className="flex items-center gap-2.5">
+                  <span className="text-accent-cyan">✨</span>
+                  <span>Generate Sub-flow Roadmap</span>
+                </span>
+                <span className={`text-xs font-mono shrink-0 ${aiActionLoading ? 'text-accent-cyan/60 animate-pulse' : 'text-accent-cyan/50'}`}>
+                  {aiActionLoading ? '...' : '⚡'}
+                </span>
               </button>
             )}
             <button
               onClick={handleElaborateDescription}
               disabled={aiActionLoading || isGenerating}
-              className="w-full text-left text-sm bg-dark-panel hover:bg-dark-panel-hover border border-dark-border hover:border-accent-cyan/40 px-3.5 py-2.5 rounded-lg text-neutral-300 font-sans transition-all flex items-center justify-between"
+              className="flex w-full items-center justify-between gap-2 rounded-xl border border-accent-cyan/20 bg-accent-cyan/[0.05] px-3.5 py-3 text-left text-sm text-neutral-200 transition-all hover:border-accent-cyan/40 hover:bg-accent-cyan/[0.1] disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <span>📝 AI Explain / Elaborate</span>
-              <span className="text-xs font-mono text-neutral-500">⚡</span>
+              <span className="flex items-center gap-2.5">
+                <span className="text-accent-cyan">📝</span>
+                <span>AI Explain / Elaborate</span>
+              </span>
+              <span className={`text-xs font-mono shrink-0 ${aiActionLoading ? 'text-accent-cyan/60 animate-pulse' : 'text-accent-cyan/50'}`}>
+                {aiActionLoading ? '...' : '⚡'}
+              </span>
             </button>
           </div>
         </div>

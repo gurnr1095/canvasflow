@@ -16,7 +16,7 @@
     padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: #0A0A0A;
+    background-color: #0D1117;
     background-image: radial-gradient(circle at top left, rgba(8, 141, 255, 0.12), transparent 28%),
       radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.14), transparent 25%),
       url('/chatgpt-bg.jpg');
@@ -42,20 +42,20 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0A0A0A;
+    background: #0D1117;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1F1F1F;
+    background: #21262D;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #2E2E2E;
+    background: #30363D;
   }
 }
 
 /* Glassmorphism panel class */
 .glass-panel {
-  background: rgba(18, 18, 18, 0.75);
+  background: rgba(22, 27, 34, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -66,8 +66,41 @@
   background-color: transparent;
 }
 
+/* ── Marching-ants selection rectangle (both built-in Shift+drag and custom right-drag) ── */
+@keyframes march {
+  to { background-position: 20px 0, -20px 100%, 0 -20px, 100% 20px; }
+}
+
+.sel-march,
+.react-flow__selection {
+  background-color: rgba(6, 182, 212, 0.05);
+  background-image:
+    repeating-linear-gradient(90deg, rgba(6,182,212,0.55) 0, rgba(6,182,212,0.55) 7px, transparent 7px, transparent 14px),
+    repeating-linear-gradient(90deg, rgba(6,182,212,0.55) 0, rgba(6,182,212,0.55) 7px, transparent 7px, transparent 14px),
+    repeating-linear-gradient(0deg,  rgba(6,182,212,0.55) 0, rgba(6,182,212,0.55) 7px, transparent 7px, transparent 14px),
+    repeating-linear-gradient(0deg,  rgba(6,182,212,0.55) 0, rgba(6,182,212,0.55) 7px, transparent 7px, transparent 14px);
+  background-size: 14px 1px, 14px 1px, 1px 14px, 1px 14px;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  border: none;
+  border-radius: 4px;
+  animation: march 0.45s linear infinite;
+}
+
+/* ── Node selection glow ── */
+.react-flow__node.selected {
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.45));
+}
+
+/* ── Edge hover intensify ── */
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: rgba(6, 182, 212, 0.9) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.55));
+}
+
 .react-flow__edge-path {
-  stroke: #2E2E2E !important;
+  stroke: #30363D !important;
   stroke-width: 1.5;
   transition: stroke 150ms ease, stroke-width 150ms ease;
 }
@@ -80,6 +113,8 @@
 .react-flow__edge.animated .react-flow__edge-path {
   stroke-dasharray: 5;
   animation: dash 1s linear infinite;
+  stroke: rgba(6, 182, 212, 0.55) !important;
+  filter: drop-shadow(0 0 4px rgba(6, 182, 212, 0.35));
 }
 
 @keyframes dash {
@@ -95,8 +130,8 @@
 .react-flow__handle {
   width: 7px !important;
   height: 7px !important;
-  background-color: #2E2E2E !important;
-  border: 1px solid #1F1F1F !important;
+  background-color: #30363D !important;
+  border: 1px solid #21262D !important;
   border-radius: 50% !important;
   transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
@@ -113,8 +148,8 @@
 
 /* Custom React Flow Controls (Bottom Right) */
 .react-flow__controls {
-  background: rgba(18, 18, 18, 0.8) !important;
-  border: 1px solid #1F1F1F !important;
+  background: rgba(22, 27, 34, 0.9) !important;
+  border: 1px solid #21262D !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
   backdrop-filter: blur(8px);
@@ -150,8 +185,8 @@
 
 /* Custom React Flow MiniMap */
 .react-flow__minimap {
-  background: rgba(10, 10, 10, 0.8) !important;
-  border: 1px solid #1F1F1F !important;
+  background: rgba(13, 17, 23, 0.9) !important;
+  border: 1px solid #21262D !important;
   border-radius: 10px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
   backdrop-filter: blur(8px);
@@ -163,17 +198,17 @@
 }
 
 .react-flow__minimap-node {
-  fill: #1C1C1C !important;
-  stroke: #2E2E2E !important;
+  fill: #1C2128 !important;
+  stroke: #30363D !important;
   stroke-width: 1;
 }
 
 /* Clerk Auth Custom CSS Styling overrides to blend with dark mode */
 .cl-rootBox {
   --cl-colorText: #E5E5E5;
-  --cl-colorBackground: #121212;
-  --cl-colorInputBackground: #0A0A0A;
-  --cl-colorInputBorder: #1F1F1F;
+  --cl-colorBackground: #161B22;
+  --cl-colorInputBackground: #0D1117;
+  --cl-colorInputBorder: #21262D;
   --cl-colorTextSecondary: #A3A3A3;
   --cl-colorButtonPrimary: #06B6D4;
 }

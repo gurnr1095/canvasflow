@@ -1,0 +1,37 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="bigGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0,0.5 6,3.5 0,6.5" fill="#06B6D4" opacity="0.9"/>
+    </marker>
+  </defs>
+
+  <!-- Ambient glow background -->
+  <circle cx="44" cy="50" r="34" fill="#06B6D4" opacity="0.07" filter="url(#bigGlow)"/>
+
+  <!-- Arc paths with directional arrows -->
+  <path d="M 77,23 A 38,38 0 0 0 35,15" stroke="#06B6D4" strokeWidth="2" opacity="0.8" filter="url(#glow)" markerEnd="url(#arr)"/>
+  <path d="M 35,15 A 38,38 0 0 0 12,50" stroke="#06B6D4" strokeWidth="2" opacity="0.8" filter="url(#glow)" markerEnd="url(#arr)"/>
+  <path d="M 12,50 A 38,38 0 0 0 35,85" stroke="#06B6D4" strokeWidth="2" opacity="0.8" filter="url(#glow)" markerEnd="url(#arr)"/>
+  <path d="M 35,85 A 38,38 0 0 0 77,77" stroke="#06B6D4" strokeWidth="2" opacity="0.8" filter="url(#glow)" markerEnd="url(#arr)"/>
+
+  <!-- Node circles -->
+  <circle cx="77" cy="23" r="6.5" fill="#06B6D4" filter="url(#glow)"/>
+  <circle cx="35" cy="15" r="5"   fill="#06B6D4" filter="url(#glow)"/>
+  <circle cx="12" cy="50" r="7"   fill="#06B6D4" filter="url(#bigGlow)"/>
+  <circle cx="35" cy="85" r="5"   fill="#06B6D4" filter="url(#glow)"/>
+  <circle cx="77" cy="77" r="6.5" fill="#06B6D4" filter="url(#glow)"/>
+</svg>

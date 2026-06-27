@@ -2,8 +2,9 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ReactFlowProvider } from '@xyflow/react';
 import { UserButton } from '@clerk/clerk-react';
+import { toast } from 'sonner';
 import { boardsApi } from '../lib/api';
-import { useCanvasStore } from '../stores/canvas.store';
+import { useCanvasStore, undoCanvas, redoCanvas } from '../stores/canvas.store';
 import { useAIGenerate } from '../hooks/useAIGenerate';
 import CanvasEditor from '../components/canvas/CanvasEditor';
 import Sidebar from '../components/ui/Sidebar';
@@ -23,65 +24,61 @@ export default function Board() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'unsaved'>('saved');
   const isInitialLoad = useRef(true);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Layout UI states
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
 
-  // Load board on mount
   useEffect(() => {
     if (!boardId) return;
     setIsLoadingBoard(true);
     isInitialLoad.current = true;
-    
+
     boardsApi.get(boardId)
       .then((b) => {
         setBoard(b);
         const { nodes: n, edges: e } = b.canvas_data ?? { nodes: [], edges: [] };
         loadCanvas(n, e);
-        
-        // Wait briefly for react flow layout before marking initial load as finished
-        setTimeout(() => {
-          isInitialLoad.current = false;
-        }, 100);
+        setTimeout(() => { isInitialLoad.current = false; }, 100);
       })
-      .catch(() => {
-        setBoard(null);
-      })
+      .catch(() => setBoard(null))
       .finally(() => setIsLoadingBoard(false));
   }, [boardId]);
 
-  // Handle auto-generation from presets on mount
   useEffect(() => {
-    if (!isLoadingBoard && board && location.state?.autoGeneratePrompt && !isInitialLoad.current) {
+    if (!isLoadingBoard && board && location.state?.autoGeneratePrompt) {
       const prompt = location.state.autoGeneratePrompt;
-      // Clear navigation state
       navigate(location.pathname, { replace: true, state: {} });
-      // Generate preset workflow
       generate(prompt);
     }
   }, [isLoadingBoard, board, location.state]);
 
-  // Mark unsaved on canvas changes (skip initial load)
-  useEffect(() => {
-    if (isInitialLoad.current) return;
-    setSaveStatus('unsaved');
-  }, [nodes, edges]);
-
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(async (silent = false) => {
     if (!boardId) return;
     setIsSaving(true);
     try {
       await boardsApi.saveCanvas(boardId, nodes, edges);
       setSaveStatus('saved');
-    } catch (err) {
-      console.error('Save failed:', err);
+      if (!silent) toast.success('Saved', { duration: 1500 });
+    } catch {
+      toast.error('Save failed — try again');
     } finally {
       setIsSaving(false);
     }
   }, [boardId, nodes, edges]);
 
-  // Ctrl/Cmd + S to save, and Ctrl/Cmd + K to toggle command palette
+  const handleSaveRef = useRef(handleSave);
+  useEffect(() => { handleSaveRef.current = handleSave; }, [handleSave]);
+
+  // Mark unsaved + auto-save with 2s debounce
+  useEffect(() => {
+    if (isInitialLoad.current) return;
+    setSaveStatus('unsaved');
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(() => handleSaveRef.current(true), 2000);
+    return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
+  }, [nodes, edges]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
@@ -91,6 +88,15 @@ export default function Board() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setPaletteOpen((prev) => !prev);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) redoCanvas();
+        else undoCanvas();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'y') {
+        e.preventDefault();
+        redoCanvas();
       }
     };
     window.addEventListener('keydown', handler);
@@ -102,52 +108,47 @@ export default function Board() {
   return (
     <ReactFlowProvider>
       <div className="w-screen h-screen flex flex-col text-neutral-200 overflow-hidden font-sans select-none">
-        
-        {/* Premium Compact Dark Header Bar */}
-        <header className="h-10 bg-dark-bg border-b border-dark-border flex items-center px-4 gap-3 shrink-0 z-10">
+
+        <header className="h-14 bg-dark-bg border-b border-dark-border flex items-center px-6 gap-4 shrink-0 z-10">
           <button
             onClick={() => navigate('/')}
-            className="text-neutral-500 hover:text-neutral-300 text-xs font-mono transition-colors"
+            className="text-neutral-500 hover:text-neutral-300 text-sm font-mono transition-colors"
           >
             ← Boards
           </button>
-          
-          <div className="w-px h-3 bg-dark-border" />
 
-          <span className="font-medium text-xs text-neutral-200 truncate max-w-[200px]">
-            {isLoadingBoard ? 'Loading workspace...' : (board?.name ?? 'Workspace not found')}
+          <div className="w-px h-4 bg-dark-border" />
+
+          <span className="font-semibold text-sm text-neutral-100 truncate max-w-[280px]">
+            {isLoadingBoard ? 'Loading workspace…' : (board?.name ?? 'Workspace not found')}
           </span>
 
-          <div className="flex items-center gap-1.5 font-mono text-[9px] px-2 py-0.5 rounded bg-neutral-900 border border-dark-border">
+          <div className="flex items-center gap-1.5 font-mono text-[10px] px-2.5 py-1 rounded-lg bg-neutral-900 border border-dark-border">
             <span className={`w-1.5 h-1.5 rounded-full ${
               saveStatus === 'saved' ? 'bg-green-500' : 'bg-amber-500 animate-pulse'
             }`} />
             <span className={saveStatus === 'saved' ? 'text-neutral-400' : 'text-amber-500'}>
-              {saveStatus === 'saved' ? 'Saved' : 'Unsaved changes'}
+              {saveStatus === 'saved' ? 'Saved' : 'Unsaved'}
             </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-4">
-            <span className="text-[10px] text-neutral-500 font-mono hidden md:inline">
-              ⌘S to save · ⌘K command menu
+          <div className="ml-auto flex items-center gap-5">
+            <span className="text-xs text-neutral-500 font-mono hidden md:inline">
+              ⌘S save · ⌘Z undo · ⌘K commands · ⇧drag select
             </span>
-            <div className="border border-dark-border rounded-full p-0.5 scale-90">
+            <div className="border border-dark-border rounded-full p-0.5">
               <UserButton afterSignOutUrl="/sign-in" />
             </div>
           </div>
         </header>
 
-        {/* Canvas container & Side panels */}
         <div className="flex-1 flex overflow-hidden relative w-full">
-          
-          {/* Floating Left Sidebar */}
           <Sidebar
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onOpenPalette={() => setPaletteOpen(true)}
           />
 
-          {/* Main Canvas Editor */}
           <div className="flex-1 h-full relative overflow-hidden">
             <CanvasEditor
               onSave={handleSave}
@@ -158,20 +159,17 @@ export default function Board() {
             />
           </div>
 
-          {/* Right Context Panel (slide in on selection) */}
           <AnimatePresence>
             {hasSelectedNode && <ContextPanel />}
           </AnimatePresence>
         </div>
 
-        {/* Global Command Palette dialog modal */}
         <CommandPalette
           isOpen={paletteOpen}
           onClose={() => setPaletteOpen(false)}
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           onSave={handleSave}
         />
-
       </div>
     </ReactFlowProvider>
   );

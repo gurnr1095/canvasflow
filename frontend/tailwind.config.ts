@@ -13,11 +13,11 @@ export default {
       },
       colors: {
         dark: {
-          bg: '#0A0A0A',
-          panel: '#121212',
-          'panel-hover': '#1C1C1C',
-          border: '#1F1F1F',
-          'border-focus': '#2E2E2E',
+          bg: '#0D1117',
+          panel: '#161B22',
+          'panel-hover': '#1C2128',
+          border: '#21262D',
+          'border-focus': '#30363D',
         },
         accent: {
           cyan: '#06B6D4',

@@ -80,4 +80,7 @@ export const boardsApi = {
 export const aiApi = {
   generate: (prompt: string) =>
     api.post('/ai/generate', { prompt }).then((r) => r.data),
+
+  modify: (prompt: string, contextNodes: any[], contextEdges: any[]) =>
+    api.post('/ai/modify', { prompt, context_nodes: contextNodes, context_edges: contextEdges }).then((r) => r.data),
 };
