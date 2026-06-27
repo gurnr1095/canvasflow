@@ -23,7 +23,6 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 |---|---|
 | ![Command Palette](screenshots/command-palette.png) | ![Side Panels](screenshots/side-panels.png) |
 
-> Drop your screenshots into the `screenshots/` folder using exactly these filenames and they will appear above automatically.
 
 ---
 
