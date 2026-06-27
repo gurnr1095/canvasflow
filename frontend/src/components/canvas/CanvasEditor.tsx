@@ -165,7 +165,7 @@ export default function CanvasEditor({
   );
 
   const handlePaneContextMenu = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent | MouseEvent) => {
       event.preventDefault();
       // Suppress context menu popup when the right button was used for dragging
       if (rightDragRef.current?.moved) return;

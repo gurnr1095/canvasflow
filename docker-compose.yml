@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: canvasflow
+      POSTGRES_PASSWORD: canvasflow
+      POSTGRES_DB: canvasflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canvasflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    # Loads CLERK_SECRET_KEY, CLERK_JWKS_URL, OPENROUTER_API_KEY from your .env
+    env_file: ./backend/.env
+    # DATABASE_URL is overridden here to point at the db service above
+    environment:
+      DATABASE_URL: postgresql+asyncpg://canvasflow:canvasflow@db:5432/canvasflow
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

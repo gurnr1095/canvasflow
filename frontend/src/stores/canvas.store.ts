@@ -1,4 +1,5 @@
 import { create, useStore } from 'zustand';
+import type { TemporalState } from 'zundo';
 import { temporal } from 'zundo';
 import {
   applyNodeChanges,
@@ -140,6 +141,8 @@ export const useCanvasStore = create<CanvasStore>()(
 export const undoCanvas = () => (useCanvasStore as any).temporal.getState().undo();
 export const redoCanvas = () => (useCanvasStore as any).temporal.getState().redo();
 
+type PartialCanvas = { nodes: Node[]; edges: Edge[] };
+
 // Hook for reading temporal state in components
 export const useTemporalCanvas = () =>
-  useStore((useCanvasStore as any).temporal);
+  useStore((useCanvasStore as any).temporal) as TemporalState<PartialCanvas>;
