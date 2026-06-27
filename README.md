@@ -15,9 +15,13 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 |---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Canvas](screenshots/canvas.png) |
 
-| AI Generation | Node Selection |
+| Workflow Generation | Node Selection |
 |---|---|
-| ![AI Generation](screenshots/ai-generation.png) | ![Node Selection](screenshots/node-selection.png) |
+| ![Workflow Generation](screenshots/generation.png) | ![Node Selection](screenshots/node-selection.png) |
+
+| Command Palette | Side Panels |
+|---|---|
+| ![Command Palette](screenshots/command-palette.png) | ![Side Panels](screenshots/side-panels.png) |
 
 > Drop your screenshots into the `screenshots/` folder using exactly these filenames and they will appear above automatically.
 
