@@ -38,6 +38,5 @@ logs/
 # Database dumps
 *.sql
 
-# Screenshots (add your own — not tracked)
-screenshots/*
-!screenshots/.gitkeep
+# Screenshots
+screenshots/.gitkeep
