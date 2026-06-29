@@ -5,7 +5,8 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white&style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white&style=flat-square)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white&style=flat-square)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white&style=flat-square)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white&style=flat-square)
+![Render](https://img.shields.io/badge/Deployed-Render-46E3B7?logo=render&logoColor=white&style=flat-square)
 
 ---
 
@@ -23,7 +24,6 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 |---|---|
 | ![Command Palette](screenshots/command-palette.png) | ![Side Panels](screenshots/side-panels.png) |
 
-
 ---
 
 ## Features
@@ -38,8 +38,9 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 | **Export** | Export canvas as PNG with one click |
 | **Context Menu** | Right-click nodes or canvas for add, duplicate, delete, fit view |
 | **Node Types** | AI topic nodes, workflow step nodes, sticky notes (editable, colour-coded) |
+| **Workspace Rename** | Inline rename via pencil icon on hover — no page reload required |
 | **Authentication** | Clerk sign-in / sign-up with JWT verification on every API route |
-| **Persistence** | Per-user boards stored in PostgreSQL; canvas JSON round-trips through the API |
+| **Persistence** | Per-user boards stored in PostgreSQL (Neon); canvas JSON round-trips through the API |
 
 ---
 
@@ -58,10 +59,13 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 ### Backend
 - **FastAPI** — async REST API
 - **SQLAlchemy 2 (async)** + **asyncpg** — async ORM with PostgreSQL
-- **Alembic** — database migrations
 - **Pydantic v2** — request/response validation with structured output
 - **OpenAI SDK → OpenRouter** — AI generation and canvas modification
 - **PyJWT** — Clerk JWT verification
+
+### Infrastructure
+- **Render** — backend deployed as a Docker Web Service; frontend as a Static Site
+- **Neon** — serverless PostgreSQL (free tier) via direct connection endpoint
 
 ---
 
@@ -70,17 +74,18 @@ CanvasFlow is a full-stack AI-powered canvas application for building visual wor
 ```text
 canvasflow/
 ├── docker-compose.yml
+├── render.yaml              # Render Blueprint — defines both services
 ├── backend/
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── app/
 │       ├── main.py          # FastAPI app, CORS, startup hook
 │       ├── auth.py          # Clerk JWT verification
-│       ├── database.py      # Async SQLAlchemy engine
+│       ├── database.py      # Async SQLAlchemy engine + Neon URL normalization
 │       ├── models.py        # ORM models
 │       ├── schemas.py       # Pydantic schemas
 │       └── routers/
-│           ├── boards.py    # CRUD for boards + canvas data
+│           ├── boards.py    # CRUD for boards + canvas data + rename
 │           └── ai.py        # /ai/generate and /ai/modify
 └── frontend/
     ├── Dockerfile
@@ -91,101 +96,89 @@ canvasflow/
         │   └── ui/          # ContextMenu, Sidebar, CommandPalette, ContextPanel
         ├── hooks/           # useAIGenerate
         ├── lib/             # api.ts (typed API client)
-        ├── pages/           # Dashboard, Board, Sign-in, Sign-up
+        ├── pages/           # Dashboard, Board
         ├── stores/          # canvas.store.ts (Zustand + zundo)
         └── types/
 ```
 
 ---
 
+## Deployment (Render + Neon)
+
+The app is deployed using a `render.yaml` Blueprint. The backend runs as a Docker Web Service and the frontend as a Render Static Site. PostgreSQL is hosted on [Neon](https://neon.tech) (free tier).
+
+### Render environment variables to set manually
+
+**Backend service:**
+
+| Key | Value |
+|---|---|
+| `DATABASE_URL` | Neon **direct** connection string (not the pooler) |
+| `CLERK_JWKS_URL` | `https://<your-clerk-domain>/.well-known/jwks.json` |
+| `OPENROUTER_API_KEY` | From [openrouter.ai](https://openrouter.ai) |
+| `FRONTEND_URL` | Your Render static site URL |
+
+**Frontend service:**
+
+| Key | Value |
+|---|---|
+| `VITE_CLERK_PUBLISHABLE_KEY` | `pk_live_...` from Clerk Dashboard |
+| `VITE_API_URL` | Your Render backend URL |
+
+> Use the **Direct** Neon connection string, not the pooler. The pooler strips `search_path`, causing table-not-found errors with asyncpg.
+
+---
+
 ## Quick Start — Docker
 
-Docker is the recommended way to demo this project. It starts all three services (PostgreSQL database, Python backend, React frontend) with a single command — no need to install Node, Python, or PostgreSQL locally.
+Docker is the recommended way to run this project locally. It starts all three services (PostgreSQL, Python backend, React frontend) with a single command.
 
-### Step 1 — Install Docker Desktop
+### Prerequisites
 
-Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for your OS. Once installed, make sure it is running (you should see the Docker whale icon in your system tray / menu bar).
+[Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
-Verify it works:
 ```bash
 docker --version
 # Docker version 26.x.x ...
 ```
 
-### Step 2 — Create your environment file
-
-The backend needs three API keys. Create `backend/.env` by copying the example:
+### Setup
 
 ```bash
+# 1. Copy and fill in the backend env file
 cp backend/.env.example backend/.env
 ```
 
-Then open `backend/.env` and fill in:
+`backend/.env` needs:
 
 ```env
-CLERK_SECRET_KEY=sk_test_...        # From Clerk Dashboard → API Keys
 CLERK_JWKS_URL=https://<your-clerk-domain>/.well-known/jwks.json
-OPENROUTER_API_KEY=sk-or-...        # From openrouter.ai → Keys
+OPENROUTER_API_KEY=sk-or-...
 ```
 
-> `DATABASE_URL` is **not** needed in this file for Docker — `docker-compose.yml` overrides it automatically to point at the bundled PostgreSQL container.
-
-### Step 3 — Build and start
-
-From the project root (where `docker-compose.yml` lives):
+> `DATABASE_URL` is not needed for Docker — `docker-compose.yml` points at the bundled PostgreSQL container automatically.
 
 ```bash
+# 2. Build and start
 docker compose up --build
 ```
-
-Docker will:
-1. Pull the PostgreSQL 16 image
-2. Build the Python backend image (installs `requirements.txt`)
-3. Build the React frontend image (runs `npm ci` + `vite build`, then serves via nginx)
-4. Start all three containers in the correct order (database → backend → frontend)
-
-First build takes **2–4 minutes**. Subsequent starts (without `--build`) take a few seconds.
-
-### Step 4 — Open the app
-
-Once you see `Application startup complete` in the logs, open:
 
 | Service | URL |
 |---|---|
 | **App** | http://localhost:5173 |
 | **API** | http://localhost:8000 |
-| **Interactive API docs** | http://localhost:8000/docs |
+| **API docs** | http://localhost:8000/docs |
 
-### Everyday usage
+### Common commands
 
 ```bash
-# Start (after first build — much faster, no rebuild)
-docker compose up
-
-# Start in background (logs won't fill your terminal)
-docker compose up -d
-
-# View logs while running in background
-docker compose logs -f
-
-# Stop everything (database data is preserved)
-docker compose down
-
-# Stop and wipe the database (fresh start)
-docker compose down -v
-
-# Rebuild after code changes
-docker compose up --build
+docker compose up          # start (no rebuild)
+docker compose up -d       # start in background
+docker compose logs -f     # stream logs
+docker compose down        # stop (data preserved)
+docker compose down -v     # stop + wipe database
+docker compose up --build  # rebuild after code changes
 ```
-
-### Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| Port 5173 or 8000 already in use | Stop the other process, or change the port mapping in `docker-compose.yml` (e.g. `"5174:80"`) |
-| Backend crashes on start | Check `docker compose logs backend` — usually a missing env var |
-| Database connection refused | The `db` health check may still be running; wait 10 s and retry |
-| Frontend shows blank page | Hard-refresh the browser (`Ctrl+Shift+R`) — nginx may have cached a stale build |
 
 ---
 
@@ -193,9 +186,7 @@ docker compose up --build
 
 ### Prerequisites
 
-- Node.js 20+
-- Python 3.12+
-- PostgreSQL 15+
+- Node.js 20+, Python 3.12+, PostgreSQL 15+
 - A [Clerk](https://clerk.com) project
 - An [OpenRouter](https://openrouter.ai) API key
 
@@ -203,18 +194,11 @@ docker compose up --build
 
 ```bash
 cd backend
-
 python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS / Linux:
-source .venv/bin/activate
-
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-
-cp .env.example .env
-# Fill in the values (see Environment Variables below)
-
+cp .env.example .env   # fill in values
 uvicorn app.main:app --reload
 # → http://localhost:8000
 ```
@@ -223,11 +207,8 @@ uvicorn app.main:app --reload
 
 ```bash
 cd frontend
-
 npm install
-
-# Create frontend/.env (see Environment Variables below)
-
+# create frontend/.env (see below)
 npm run dev
 # → http://localhost:5173
 ```
@@ -240,7 +221,6 @@ npm run dev
 
 ```env
 DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/canvasflow
-CLERK_SECRET_KEY=sk_test_...
 CLERK_JWKS_URL=https://<your-clerk-domain>/.well-known/jwks.json
 OPENROUTER_API_KEY=sk-or-...
 ```
@@ -252,8 +232,6 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
 VITE_API_URL=http://localhost:8000
 ```
 
-> **Docker note:** `DATABASE_URL` is automatically overridden by `docker-compose.yml` to point at the `db` service — you only need the other three keys in `backend/.env`.
-
 ---
 
 ## API Reference
@@ -263,6 +241,7 @@ VITE_API_URL=http://localhost:8000
 | `GET` | `/boards` | List all boards for the authenticated user |
 | `POST` | `/boards` | Create a new board |
 | `GET` | `/boards/{id}` | Get board details and canvas data |
+| `PATCH` | `/boards/{id}` | Rename a board |
 | `PUT` | `/boards/{id}/canvas` | Save canvas (nodes + edges JSON) |
 | `DELETE` | `/boards/{id}` | Delete a board |
 | `POST` | `/ai/generate` | Generate a node graph from a text prompt |
