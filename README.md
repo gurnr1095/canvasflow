@@ -1,5 +1,7 @@
 # CanvasFlow
 
+**Live demo → [canvasflow-frontend-607x.onrender.com](https://canvasflow-frontend-607x.onrender.com)**
+
 CanvasFlow is a full-stack AI-powered canvas application for building visual workflows and diagrams. Describe what you want to build, and the AI generates a connected node graph you can edit, rearrange, and extend.
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white&style=flat-square)
