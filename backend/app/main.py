@@ -22,15 +22,10 @@ async def log_requests(request: Request, call_next):
         logger.exception("Exception during request")
         raise e
 
-_origins = ["http://localhost:5173", "http://localhost:5174"]
-_frontend_url = os.getenv("FRONTEND_URL", "").strip()
-if _frontend_url:
-    _origins.append(_frontend_url)
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
