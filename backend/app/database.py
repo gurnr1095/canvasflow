@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import MetaData
 from dotenv import load_dotenv
 from urllib.parse import urlparse, urlunparse
 import os
@@ -27,7 +28,9 @@ engine = create_async_engine(_db_url, echo=False, connect_args=_connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 class Base(DeclarativeBase):
-    pass
+    # Explicitly qualify all tables as public.* so Neon pooler's empty
+    # search_path doesn't cause "no schema has been selected to create in"
+    metadata = MetaData(schema="public")
 
 async def get_db() -> AsyncSession:
     async with AsyncSessionLocal() as session:
