@@ -74,6 +74,9 @@ export const boardsApi = {
   saveCanvas: (id: string, nodes: Node[], edges: Edge[]) =>
     api.put(`/boards/${id}/canvas`, { nodes, edges }).then((r) => r.data),
 
+  rename: (id: string, name: string) =>
+    api.patch<BoardDetail>(`/boards/${id}`, { name }).then((r) => r.data),
+
   delete: (id: string) =>
     api.delete(`/boards/${id}`).then((r) => r.data),
 };

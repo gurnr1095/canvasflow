@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
 from app.models import Board
-from app.schemas import BoardCreate, CanvasSave, BoardOut, BoardDetailOut
+from app.schemas import BoardCreate, BoardRename, CanvasSave, BoardOut, BoardDetailOut
 from app.auth import get_current_user_id
 from fastapi import Request
 from sqlalchemy import select, func
@@ -97,6 +97,24 @@ async def save_canvas(
     if not board or board.user_id != user_id:
         raise HTTPException(status_code=404, detail="Board not found")
     board.canvas_data = {"nodes": body.nodes, "edges": body.edges}
+    await db.commit()
+    await db.refresh(board)
+    return BoardDetailOut.model_validate(board)
+
+
+@router.patch("/{board_id}", response_model=BoardDetailOut)
+async def rename_board(
+    board_id: str,
+    body: BoardRename,
+    user_id: str = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    if not body.name.strip():
+        raise HTTPException(status_code=400, detail="Board name cannot be empty")
+    board = await db.get(Board, board_id)
+    if not board or board.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board.name = body.name.strip()
     await db.commit()
     await db.refresh(board)
     return BoardDetailOut.model_validate(board)

@@ -6,6 +6,9 @@ from typing import Any
 class BoardCreate(BaseModel):
     name: str
 
+class BoardRename(BaseModel):
+    name: str
+
 class CanvasSave(BaseModel):
     nodes: list[Any]
     edges: list[Any]

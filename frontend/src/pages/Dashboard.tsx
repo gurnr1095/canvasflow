@@ -202,6 +202,8 @@ export default function Dashboard() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const [newName, setNewName] = useState('');
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
 
   useEffect(() => {
     loadBoards();
@@ -242,6 +244,20 @@ export default function Dashboard() {
       toast.success('Workspace deleted');
     } catch {
       toast.error('Failed to delete workspace');
+    }
+  };
+
+  const handleRename = async (id: string) => {
+    const trimmed = renameValue.trim();
+    if (!trimmed) { setRenamingId(null); return; }
+    try {
+      const updated = await boardsApi.rename(id, trimmed);
+      setBoards((prev) => prev.map((b) => b.id === id ? { ...b, name: updated.name } : b));
+      toast.success('Workspace renamed');
+    } catch {
+      toast.error('Failed to rename workspace');
+    } finally {
+      setRenamingId(null);
     }
   };
 
@@ -453,9 +469,33 @@ export default function Dashboard() {
                     )}
 
                     <div>
-                      <h3 className="truncate pr-8 text-base font-semibold text-neutral-100 group-hover:text-white transition-colors">
-                        {board.name}
-                      </h3>
+                      {renamingId === board.id ? (
+                        <input
+                          autoFocus
+                          value={renameValue}
+                          onChange={(e) => setRenameValue(e.target.value)}
+                          onBlur={() => handleRename(board.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleRename(board.id);
+                            if (e.key === 'Escape') setRenamingId(null);
+                            e.stopPropagation();
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full pr-8 text-base font-semibold text-white bg-transparent border-b border-accent-cyan/60 outline-none truncate"
+                        />
+                      ) : (
+                        <h3
+                          className="truncate pr-8 text-base font-semibold text-neutral-100 group-hover:text-white transition-colors cursor-text"
+                          onDoubleClick={(e) => {
+                            e.stopPropagation();
+                            setRenamingId(board.id);
+                            setRenameValue(board.name);
+                          }}
+                          title="Double-click to rename"
+                        >
+                          {board.name}
+                        </h3>
+                      )}
                       <div className="mt-2.5 flex items-center gap-2">
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-mono ${
                           nodeCount > 0
