@@ -484,17 +484,25 @@ export default function Dashboard() {
                           className="w-full pr-8 text-base font-semibold text-white bg-transparent border-b border-accent-cyan/60 outline-none truncate"
                         />
                       ) : (
-                        <h3
-                          className="truncate pr-8 text-base font-semibold text-neutral-100 group-hover:text-white transition-colors cursor-text"
-                          onDoubleClick={(e) => {
-                            e.stopPropagation();
-                            setRenamingId(board.id);
-                            setRenameValue(board.name);
-                          }}
-                          title="Double-click to rename"
-                        >
-                          {board.name}
-                        </h3>
+                        <div className="flex items-center gap-1.5 pr-8">
+                          <h3 className="truncate text-base font-semibold text-neutral-100 group-hover:text-white transition-colors">
+                            {board.name}
+                          </h3>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setRenamingId(board.id);
+                              setRenameValue(board.name);
+                            }}
+                            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-neutral-500 hover:text-accent-cyan"
+                            title="Rename"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                          </button>
+                        </div>
                       )}
                       <div className="mt-2.5 flex items-center gap-2">
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-mono ${
