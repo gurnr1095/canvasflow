@@ -19,11 +19,11 @@ _parsed = urlparse(_db_url)
 _needs_ssl = "sslmode=require" in (_parsed.query or "") or "neon.tech" in (_parsed.hostname or "")
 _db_url = urlunparse(_parsed._replace(query=""))
 
-engine = create_async_engine(
-    _db_url,
-    echo=False,
-    connect_args={"ssl": "require"} if _needs_ssl else {},
-)
+_connect_args: dict = {"server_settings": {"search_path": "public"}}
+if _needs_ssl:
+    _connect_args["ssl"] = "require"
+
+engine = create_async_engine(_db_url, echo=False, connect_args=_connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 class Base(DeclarativeBase):
