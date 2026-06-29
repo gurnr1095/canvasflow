@@ -7,6 +7,11 @@ import { motion } from 'framer-motion';
 import type { Node as FlowNode } from '@xyflow/react';
 import type { BoardListItem } from '../types/canvas.types';
 
+const DOT_GRID = {
+  backgroundImage: 'radial-gradient(circle, rgba(148,163,184,0.07) 1px, transparent 1px)',
+  backgroundSize: '28px 28px',
+};
+
 const PRESETS = [
   { name: 'React App Architecture', prompt: 'Create a micro-frontend architecture for a React ecommerce app with checkout, catalog, and auth modules' },
   { name: 'API Gateway Flow', prompt: 'Design an API Gateway routing flow with authentication, rate limiting, and caching middleware' },
@@ -286,7 +291,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-dark-bg text-neutral-200 flex flex-col font-sans">
+    <div className="min-h-screen bg-dark-bg text-neutral-200 flex flex-col font-sans" style={DOT_GRID}>
 
       {/* Header */}
       <header className="border-b border-dark-border px-8 py-4.5 flex items-center justify-between bg-dark-bg/80 backdrop-blur-md sticky top-0 z-50">
@@ -323,7 +328,10 @@ export default function Dashboard() {
               Workspace Hub
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-neutral-100 leading-tight">
-              Turn ideas into<br className="hidden sm:block" /> connected systems.
+              Turn ideas into<br className="hidden sm:block" />{' '}
+              <span className="bg-gradient-to-r from-accent-cyan via-sky-400 to-blue-500 bg-clip-text text-transparent">
+                connected systems.
+              </span>
             </h1>
             <p className="text-base text-neutral-400 max-w-lg leading-relaxed">
               Plan architecture, map workflows, and generate visual documentation from a single collaborative canvas.
@@ -375,7 +383,7 @@ export default function Dashboard() {
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
             },
           ] as const).map(({ label, value, color, tint, icon }) => (
-            <div key={label} className={`rounded-2xl border border-dark-border ${tint} p-5 backdrop-blur-sm`}>
+            <div key={label} className={`rounded-2xl border border-dark-border ${tint} p-5 backdrop-blur-sm hover:border-neutral-600 transition-colors duration-200`}>
               <div className="flex items-start justify-between">
                 <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-500">{label}</p>
                 <span className={`${color} opacity-50`}>{icon}</span>
@@ -457,7 +465,7 @@ export default function Dashboard() {
                     className={`group relative flex min-h-[150px] cursor-pointer flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:-translate-y-0.5 ${
                       isEmpty
                         ? 'border-dark-border/40 bg-dark-panel/40 opacity-60 hover:opacity-90 hover:border-dark-border/70'
-                        : 'border-dark-border bg-dark-panel/80 hover:border-accent-cyan/30 hover:bg-dark-panel-hover'
+                        : 'border-dark-border bg-dark-panel/80 hover:border-accent-cyan/30 hover:bg-dark-panel-hover hover:shadow-[0_0_24px_rgba(6,182,212,0.08)]'
                     }`}
                   >
                     <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl bg-gradient-to-r from-accent-cyan via-sky-400 to-blue-500" />
