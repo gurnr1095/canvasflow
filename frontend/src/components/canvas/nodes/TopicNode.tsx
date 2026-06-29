@@ -2,11 +2,12 @@ import { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useCanvasStore } from '../../../stores/canvas.store';
+import type { TopicData } from '../../../types/canvas.types';
 
 const COLORS = ['#93C5FD', '#86EFAC', '#FCA5A5', '#D8B4FE', '#FDE68A'];
 
 const TopicNode = memo(({ id, data, selected }: NodeProps) => {
-  const { label = 'Topic', description = '', color = '#93C5FD' } = data as any;
+  const { label = 'Topic', description = '', color = '#93C5FD' } = data as unknown as TopicData;
   const [editingLabel, setEditingLabel] = useState(false);
   const [editingDesc, setEditingDesc] = useState(false);
   const updateNodeData = useCanvasStore((s) => s.updateNodeData);

@@ -4,6 +4,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import { UserButton } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import { boardsApi } from '../lib/api';
+import type { BoardDetail } from '../types/canvas.types';
 import { useCanvasStore, undoCanvas, redoCanvas } from '../stores/canvas.store';
 import { useAIGenerate } from '../hooks/useAIGenerate';
 import CanvasEditor from '../components/canvas/CanvasEditor';
@@ -19,7 +20,7 @@ export default function Board() {
   const { loadCanvas, nodes, edges } = useCanvasStore();
   const { generate } = useAIGenerate();
 
-  const [board, setBoard] = useState<any>(null);
+  const [board, setBoard] = useState<BoardDetail | null>(null);
   const [isLoadingBoard, setIsLoadingBoard] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'unsaved'>('saved');

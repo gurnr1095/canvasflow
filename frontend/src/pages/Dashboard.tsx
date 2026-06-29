@@ -4,6 +4,8 @@ import { useUser, UserButton } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import { boardsApi } from '../lib/api';
 import { motion } from 'framer-motion';
+import type { Node as FlowNode } from '@xyflow/react';
+import type { BoardListItem } from '../types/canvas.types';
 
 const PRESETS = [
   { name: 'React App Architecture', prompt: 'Create a micro-frontend architecture for a React ecommerce app with checkout, catalog, and auth modules' },
@@ -160,10 +162,10 @@ function CanvasPreview() {
   );
 }
 
-function BoardThumbnail({ nodes }: { nodes: any[] }) {
+function BoardThumbnail({ nodes }: { nodes: FlowNode[] }) {
   if (!nodes.length) return null;
-  const xs = nodes.map((n: any) => n.position?.x ?? 0);
-  const ys = nodes.map((n: any) => n.position?.y ?? 0);
+  const xs = nodes.map((n) => n.position?.x ?? 0);
+  const ys = nodes.map((n) => n.position?.y ?? 0);
   const minX = Math.min(...xs) - 20;
   const minY = Math.min(...ys) - 20;
   const maxX = Math.max(...xs) + 170;
@@ -174,7 +176,7 @@ function BoardThumbnail({ nodes }: { nodes: any[] }) {
       className="w-full h-full"
       preserveAspectRatio="xMidYMid meet"
     >
-      {nodes.map((n: any) => (
+      {nodes.map((n) => (
         <rect
           key={n.id}
           x={n.position?.x ?? 0}
@@ -194,7 +196,7 @@ function BoardThumbnail({ nodes }: { nodes: any[] }) {
 export default function Dashboard() {
   const { user } = useUser();
   const navigate = useNavigate();
-  const [boards, setBoards] = useState<any[]>([]);
+  const [boards, setBoards] = useState<BoardListItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);

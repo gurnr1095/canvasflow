@@ -19,12 +19,12 @@ export default function AIChatBar() {
       const { nodes: newNodes, edges: newEdges } = await aiApi.modify(prompt, nodes, edges);
 
       const idMap: Record<string, string> = {};
-      const updatedNodes = (newNodes || []).map((n: any) => {
+      const updatedNodes = (newNodes || []).map((n) => {
         const newId = nanoid();
         idMap[n.id] = newId;
         return { ...n, id: newId };
       });
-      const updatedEdges = (newEdges || []).map((e: any) => ({
+      const updatedEdges = (newEdges || []).map((e) => ({
         ...e,
         id: nanoid(),
         source: idMap[e.source] ?? e.source,

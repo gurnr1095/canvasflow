@@ -14,12 +14,12 @@ export function useAIGenerate() {
       const { nodes, edges } = await aiApi.generate(prompt);
 
       const idMap: Record<string, string> = {};
-      const updatedNodes = nodes.map((n: any) => {
+      const updatedNodes = nodes.map((n) => {
         const newId = nanoid();
         idMap[n.id] = newId;
         return { ...n, id: newId };
       });
-      const updatedEdges = edges.map((e: any) => ({
+      const updatedEdges = edges.map((e) => ({
         ...e,
         id: nanoid(),
         source: idMap[e.source],

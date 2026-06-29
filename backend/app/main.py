@@ -1,6 +1,7 @@
 import logging
-logging.basicConfig(filename='api_debug.log', level=logging.DEBUG, 
-                    format='%(asctime)s %(levelname)s %(name)s %(message)s')
+import os
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, Request
@@ -21,9 +22,14 @@ async def log_requests(request: Request, call_next):
         logger.exception("Exception during request")
         raise e
 
+_origins = ["http://localhost:5173", "http://localhost:5174"]
+_frontend_url = os.getenv("FRONTEND_URL", "").strip()
+if _frontend_url:
+    _origins.append(_frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "https://your-vercel-domain.vercel.app"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

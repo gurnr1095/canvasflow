@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useClerk } from '@clerk/clerk-react';
 import { boardsApi } from '../../lib/api';
+import type { BoardListItem } from '../../types/canvas.types';
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +15,7 @@ export default function Sidebar({ isOpen, onClose, onOpenPalette }: Props) {
   const { boardId } = useParams<{ boardId: string }>();
   const { signOut } = useClerk();
 
-  const [boards, setBoards] = useState<any[]>([]);
+  const [boards, setBoards] = useState<BoardListItem[]>([]);
   const [search, setSearch] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ export default function Sidebar({ isOpen, onClose, onOpenPalette }: Props) {
 
   if (!isOpen) return null;
 
-  const boardItem = (b: any) => {
+  const boardItem = (b: BoardListItem) => {
     const isActive = b.id === boardId;
     return (
       <button

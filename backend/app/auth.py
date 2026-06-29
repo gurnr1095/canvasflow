@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -42,6 +43,7 @@ async def get_current_user_id(
             signing_key.key,
             algorithms=["RS256"],
             options={"verify_aud": False},
+            leeway=timedelta(seconds=120),
         )
 
         return payload["sub"]

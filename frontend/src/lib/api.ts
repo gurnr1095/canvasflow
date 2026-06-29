@@ -1,4 +1,6 @@
 import axios from 'axios';
+import type { Node, Edge } from '@xyflow/react';
+import type { BoardSummary, BoardListItem, BoardDetail, ApiCanvasResponse } from '../types/canvas.types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8000',
@@ -61,15 +63,15 @@ export default api;
 
 export const boardsApi = {
   list: () =>
-    api.get<{ boards: any[] }>('/boards').then((r) => r.data.boards),
+    api.get<{ boards: BoardListItem[] }>('/boards').then((r) => r.data.boards),
 
   create: (name: string) =>
-    api.post('/boards', { name }).then((r) => r.data),
+    api.post<BoardDetail>('/boards', { name }).then((r) => r.data),
 
   get: (id: string) =>
-    api.get(`/boards/${id}`).then((r) => r.data),
+    api.get<BoardDetail>(`/boards/${id}`).then((r) => r.data),
 
-  saveCanvas: (id: string, nodes: any[], edges: any[]) =>
+  saveCanvas: (id: string, nodes: Node[], edges: Edge[]) =>
     api.put(`/boards/${id}/canvas`, { nodes, edges }).then((r) => r.data),
 
   delete: (id: string) =>
@@ -79,8 +81,8 @@ export const boardsApi = {
 // --- AI API ---
 export const aiApi = {
   generate: (prompt: string) =>
-    api.post('/ai/generate', { prompt }).then((r) => r.data),
+    api.post<ApiCanvasResponse>('/ai/generate', { prompt }).then((r) => r.data),
 
-  modify: (prompt: string, contextNodes: any[], contextEdges: any[]) =>
-    api.post('/ai/modify', { prompt, context_nodes: contextNodes, context_edges: contextEdges }).then((r) => r.data),
+  modify: (prompt: string, contextNodes: Node[], contextEdges: Edge[]) =>
+    api.post<ApiCanvasResponse>('/ai/modify', { prompt, context_nodes: contextNodes, context_edges: contextEdges }).then((r) => r.data),
 };

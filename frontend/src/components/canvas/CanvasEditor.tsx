@@ -6,6 +6,7 @@ import {
   MiniMap,
   BackgroundVariant,
   useReactFlow,
+  type Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -116,8 +117,8 @@ export default function CanvasEditor({
         const allNodes = getNodesRef.current();
         const selectedIds = new Set(
           allNodes.filter(node => {
-            const w = (node.measured as any)?.width  ?? 160;
-            const h = (node.measured as any)?.height ?? 80;
+            const w = node.measured?.width  ?? 160;
+            const h = node.measured?.height ?? 80;
             // Partial intersection: node rect overlaps selection rect
             return (
               node.position.x     < p2.x &&
@@ -176,7 +177,7 @@ export default function CanvasEditor({
   );
 
   const handleNodeContextMenu = useCallback(
-    (event: React.MouseEvent, node: any) => {
+    (event: React.MouseEvent, node: Node) => {
       event.preventDefault();
       setCtxMenu({ x: event.clientX, y: event.clientY, type: 'node', nodeId: node.id });
     },

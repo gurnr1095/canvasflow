@@ -1,4 +1,4 @@
-import { create, useStore } from 'zustand';
+import { create, useStore, type StoreApi } from 'zustand';
 import type { TemporalState } from 'zundo';
 import { temporal } from 'zundo';
 import {
@@ -137,12 +137,16 @@ export const useCanvasStore = create<CanvasStore>()(
   )
 );
 
-// Undo / redo helpers — call from event handlers without hooks
-export const undoCanvas = () => (useCanvasStore as any).temporal.getState().undo();
-export const redoCanvas = () => (useCanvasStore as any).temporal.getState().redo();
-
 type PartialCanvas = { nodes: Node[]; edges: Edge[] };
+type TemporalStore = StoreApi<TemporalState<PartialCanvas>>;
+
+const getTemporalStore = () =>
+  (useCanvasStore as unknown as { temporal: TemporalStore }).temporal;
+
+// Undo / redo helpers — call from event handlers without hooks
+export const undoCanvas = () => getTemporalStore().getState().undo();
+export const redoCanvas = () => getTemporalStore().getState().redo();
 
 // Hook for reading temporal state in components
-export const useTemporalCanvas = () =>
-  useStore((useCanvasStore as any).temporal) as TemporalState<PartialCanvas>;
+export const useTemporalCanvas = (): TemporalState<PartialCanvas> =>
+  useStore(getTemporalStore());

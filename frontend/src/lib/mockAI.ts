@@ -2,8 +2,9 @@
 // The contract (input: string prompt, output: {nodes, edges}) never changes.
 
 import { nanoid } from 'nanoid';
+import type { Node, Edge } from '@xyflow/react';
 
-const MOCK_ROADMAPS: Record<string, { nodes: any[]; edges: any[] }> = {
+const MOCK_ROADMAPS: Record<string, { nodes: Node[]; edges: Edge[] }> = {
   default: {
     nodes: [
       { id: '1', type: 'topic', position: { x: 300, y: 50 },  data: { label: 'Fundamentals', description: 'Core concepts', color: '#93C5FD' } },
@@ -59,7 +60,7 @@ function delay(ms: number) {
 
 export async function generateRoadmap(
   prompt: string
-): Promise<{ nodes: any[]; edges: any[] }> {
+): Promise<{ nodes: Node[]; edges: Edge[] }> {
   await delay(1200);
 
   const key = detectTopic(prompt);

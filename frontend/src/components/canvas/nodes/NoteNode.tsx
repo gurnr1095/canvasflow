@@ -2,6 +2,7 @@ import { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useCanvasStore } from '../../../stores/canvas.store';
+import type { NoteNodeData } from '../../../types/canvas.types';
 
 const NOTE_COLORS = [
   { hex: '#FEF08A', name: 'Amber' },
@@ -12,7 +13,7 @@ const NOTE_COLORS = [
 ];
 
 const NoteNode = memo(({ id, data, selected }: NodeProps) => {
-  const { title = 'Note', content = 'Double-click to edit...', color = '#FEF08A' } = data as any;
+  const { title = 'Note', content = 'Double-click to edit...', color = '#FEF08A' } = data as unknown as NoteNodeData;
   const [editing, setEditing] = useState(false);
   const updateNodeData = useCanvasStore((s) => s.updateNodeData);
 

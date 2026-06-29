@@ -1,9 +1,10 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { AINodeData } from '../../../types/canvas.types';
 
 const AINode = memo(({ data, selected }: NodeProps) => {
-  const { label = 'AI Node', description = '' } = data as any;
+  const { label = 'AI Node', description = '' } = data as unknown as AINodeData;
 
   return (
     <motion.div

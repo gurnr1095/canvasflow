@@ -5,7 +5,13 @@ import os
 
 load_dotenv()
 
-engine = create_async_engine(os.getenv("DATABASE_URL"), echo=False)
+_db_url = os.getenv("DATABASE_URL", "")
+# Render provides postgres:// but asyncpg requires postgresql+asyncpg://
+if _db_url.startswith("postgres://"):
+    _db_url = "postgresql+asyncpg://" + _db_url[len("postgres://"):]
+elif _db_url.startswith("postgresql://") and "+asyncpg" not in _db_url:
+    _db_url = "postgresql+asyncpg://" + _db_url[len("postgresql://"):]
+engine = create_async_engine(_db_url, echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 class Base(DeclarativeBase):

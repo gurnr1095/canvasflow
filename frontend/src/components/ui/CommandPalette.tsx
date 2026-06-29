@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useReactFlow } from '@xyflow/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '../../stores/canvas.store';
+import type { NodeDataLoose } from '../../types/canvas.types';
+
+interface PaletteItem {
+  id: string;
+  label: string;
+  type: 'action' | 'mode' | 'node';
+  targetMode?: 'ai' | 'search-nodes';
+  action?: () => void;
+  nodeId?: string;
+}
 
 interface Props {
   isOpen: boolean;
@@ -82,15 +92,15 @@ export default function CommandPalette({ isOpen, onClose, onToggleSidebar, onSav
       const { nanoid } = await import('nanoid');
       
       const { nodes: newNodes, edges: newEdges } = await aiApi.generate(promptText);
-      
+
       // Map IDs
       const idMap: Record<string, string> = {};
-      const updatedNodes = newNodes.map((n: any) => {
+      const updatedNodes = newNodes.map((n) => {
         const newId = nanoid();
         idMap[n.id] = newId;
         return { ...n, id: newId };
       });
-      const updatedEdges = newEdges.map((e: any) => ({
+      const updatedEdges = newEdges.map((e) => ({
         ...e,
         id: nanoid(),
         source: idMap[e.source],
@@ -105,7 +115,7 @@ export default function CommandPalette({ isOpen, onClose, onToggleSidebar, onSav
     }
   };
 
-  const getFilteredItems = () => {
+  const getFilteredItems = (): PaletteItem[] => {
     if (mode === 'ai') {
       return [{ id: 'ai-run', label: `Generate workflow for "${query}"`, type: 'action' }];
     }
@@ -113,22 +123,22 @@ export default function CommandPalette({ isOpen, onClose, onToggleSidebar, onSav
     if (mode === 'search-nodes') {
       return nodes
         .filter((n) => {
-          const data = n.data as any;
+          const data = n.data as NodeDataLoose;
           const name = String(data.name || data.label || data.title || '');
           return name.toLowerCase().includes(query.toLowerCase());
         })
         .map((n) => {
-          const data = n.data as any;
+          const data = n.data as NodeDataLoose;
           return {
             id: `focus-node-${n.id}`,
             label: `Focus on: ${data.name || data.label || data.title || 'Node'}`,
-            type: 'node',
+            type: 'node' as const,
             nodeId: n.id,
           };
         });
     }
 
-    const defaultCommands = [
+    const defaultCommands: PaletteItem[] = [
       { id: 'ai-prompt', label: '✨ Generate Workflow using AI...', type: 'mode', targetMode: 'ai' },
       { id: 'add-note', label: '📝 Create Note Node', type: 'action', action: () => addNoteNode(Math.random() * 200 + 100, Math.random() * 200 + 100) },
       { id: 'add-workflow', label: '⚙️ Create Workflow Node', type: 'action', action: () => addWorkflowNode(Math.random() * 200 + 100, Math.random() * 200 + 100) },
@@ -145,15 +155,15 @@ export default function CommandPalette({ isOpen, onClose, onToggleSidebar, onSav
     );
   };
 
-  const handleSelect = async (item: any) => {
-    if (item.type === 'mode') {
+  const handleSelect = async (item: PaletteItem) => {
+    if (item.type === 'mode' && item.targetMode) {
       setMode(item.targetMode);
       setQuery('');
       setSelectedIndex(0);
       return;
     }
 
-    if (item.type === 'node') {
+    if (item.type === 'node' && item.nodeId) {
       const node = getNode(item.nodeId);
       if (node) {
         fitView({ nodes: [node], duration: 800, maxZoom: 1.2 });

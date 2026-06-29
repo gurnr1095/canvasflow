@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCanvasStore } from '../../stores/canvas.store';
-import { useReactFlow } from '@xyflow/react';
+import { useReactFlow, type Edge } from '@xyflow/react';
+import type { NodeDataLoose } from '../../types/canvas.types';
 
 const NOTE_COLORS = [
   { hex: '#FEF08A', name: 'Amber' },
@@ -27,7 +28,7 @@ export default function ContextPanel() {
   // Sync inputs when selectedNode changes
   useEffect(() => {
     if (selectedNode) {
-      const data = selectedNode.data as any;
+      const data = selectedNode.data as NodeDataLoose;
       setLocalTitle(data.name || data.label || data.title || '');
       setLocalContent(data.content || data.description || '');
       setLocalInputs((data.inputs || []).join(', '));
@@ -37,7 +38,7 @@ export default function ContextPanel() {
 
   if (!selectedNode) return null;
 
-  const nodeData = selectedNode.data as any;
+  const nodeData = selectedNode.data as NodeDataLoose;
   const isWorkflow = selectedNode.type === 'workflow';
   const isNote = selectedNode.type === 'note';
   const isAiNode = selectedNode.type === 'topic' || selectedNode.type === 'ai';
@@ -47,15 +48,15 @@ export default function ContextPanel() {
     (e) => e.source === selectedNode.id || e.target === selectedNode.id
   );
 
-  const getConnectedNodeName = (edge: any): string => {
+  const getConnectedNodeName = (edge: Edge): string => {
     const targetId = edge.source === selectedNode.id ? edge.target : edge.source;
     const targetNode = nodes.find((n) => n.id === targetId);
     if (!targetNode) return 'Unknown Node';
-    const data = targetNode.data as any;
+    const data = targetNode.data as NodeDataLoose;
     return String(data.name || data.label || data.title || 'Node');
   };
 
-  const handleUpdateField = (key: string, value: any) => {
+  const handleUpdateField = (key: string, value: string | string[]) => {
     updateNodeData(selectedNode.id, { [key]: value });
   };
 
@@ -98,7 +99,7 @@ export default function ContextPanel() {
       const currentY = selectedNode.position.y;
       
       const idMap: Record<string, string> = {};
-      const updatedNodes = newNodes.map((n: any, index: number) => {
+      const updatedNodes = newNodes.map((n, index) => {
         const newId = nanoid();
         idMap[n.id] = newId;
         return {
@@ -111,9 +112,9 @@ export default function ContextPanel() {
           },
         };
       });
-      
+
       // Map edges
-      const updatedEdges = newEdges.map((e: any) => ({
+      const updatedEdges = newEdges.map((e) => ({
         ...e,
         id: nanoid(),
         source: idMap[e.source],
@@ -152,7 +153,7 @@ export default function ContextPanel() {
       // The generate endpoint outputs nodes/edges, let's grab the description from the first node it generates
       if (res.nodes && res.nodes.length > 0) {
         const firstNode = res.nodes[0];
-        const newDesc = firstNode.data?.description || firstNode.data?.content || 'Explanation generated.';
+        const newDesc = String(firstNode.data?.description ?? 'Explanation generated.');
         
         if (isNote) {
           handleUpdateField('content', newDesc);

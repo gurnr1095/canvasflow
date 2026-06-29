@@ -2,6 +2,7 @@ import { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
+import type { WorkflowNodeData } from '../../../types/canvas.types';
 
 // Labels are intentionally omitted here — they are resolved at render-time
 // via i18next so the UI adapts to the active locale automatically.
@@ -14,7 +15,7 @@ const STATUS_CONFIG = {
 
 const WorkflowNode = memo(({ id, data, selected }: NodeProps) => {
   const { t } = useTranslation();
-  const { name = t('workflowNode.defaultName'), status = 'pending', inputs = [], outputs = [] } = data as any;
+  const { name = t('workflowNode.defaultName'), status = 'pending', inputs = [], outputs = [] } = data as unknown as WorkflowNodeData;
   const [expanded, setExpanded] = useState(true);
 
   // Security: Validate status against an explicit allowlist using hasOwnProperty to
