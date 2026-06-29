@@ -1,9 +1,3 @@
-databases:
-  - name: canvasflow-db
-    plan: free
-    databaseName: canvasflow
-    user: canvasflow
-
 services:
   # ── Backend (FastAPI) ──────────────────────────────────────────────
   - type: web
@@ -15,9 +9,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: canvasflow-db
-          property: connectionString
+        sync: false          # paste your Neon connection string here
       - key: CLERK_JWKS_URL
         sync: false          # set manually in Render dashboard
       - key: OPENROUTER_API_KEY
