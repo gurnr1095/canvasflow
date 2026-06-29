@@ -32,8 +32,13 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("create_all: tables created/verified OK")
+    except Exception as e:
+        logger.error(f"create_all FAILED: {e}", exc_info=True)
+        raise
 
 app.include_router(boards.router)
 app.include_router(ai.router)
